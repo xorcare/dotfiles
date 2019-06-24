@@ -32,3 +32,11 @@ export MANPAGER='less -X';
 # Avoid issues with `gpg` as installed via Homebrew.
 # https://stackoverflow.com/a/42265848/96656
 export GPG_TTY="$(tty)";
+
+# Formatting file timestamps
+# List timestamps in full using ISO 8601-like date, time, and time zone
+# components with nanosecond precision, e.g.,
+# ‘2019-06-17 15:42:47.750281859 +0300’.
+# This style is equivalent to ‘+%Y-%m-%d %H:%M:%S.%N %z’.
+# See https://www.gnu.org/software/coreutils/manual/html_node/Formatting-file-timestamps.html
+export TIME_STYLE='full-iso'
