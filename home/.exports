@@ -40,3 +40,9 @@ export GPG_TTY="$(tty)";
 # This style is equivalent to ‘+%Y-%m-%d %H:%M:%S.%N %z’.
 # See https://www.gnu.org/software/coreutils/manual/html_node/Formatting-file-timestamps.html
 export TIME_STYLE='full-iso'
+
+# GOPATH can be any directory on your system. In Unix examples, we will set
+# it to $HOME/go (the default since Go 1.8). Note that GOPATH must not be
+# the same path as your Go installation.
+# See https://github.com/golang/go/wiki/SettingGOPATH
+export GOPATH="${HOME}/go"
