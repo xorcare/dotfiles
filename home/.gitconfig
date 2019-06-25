@@ -99,6 +99,7 @@ rbo = rebase --onto
 rbe = rebase --edit-todo
 
 rs = reset
+rsh = reset --hard
 
 rt = remote -v
 
