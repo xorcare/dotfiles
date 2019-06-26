@@ -30,6 +30,18 @@ alias -- -="cd -"
 # because of its familiarity through being included in MS-DOS.
 alias cls='clear'
 
+# List information aliases.
+alias lf='ls -alF'
+alias la='ls -al'
+alias lah='ls -alh'
+alias ll='ls -l'
+alias llh='ls -lh'
+alias l='ls -l'
+alias lh='ls -lh'
+alias lha='ls -lha'
+alias lhf='ls -lhF'
+alias cls='clear'
+
 # Simulate OSX's pbcopy and pbpaste on other platforms.
 if [ ! $(uname -s) = "Darwin" ]; then
     alias pbcopy='xclip -selection clipboard'
