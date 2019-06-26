@@ -51,3 +51,12 @@ fi
 # Show open ports, use netstat command to quickly
 # list all TCP/UDP port on the server.
 alias ports='netstat -tulanp'
+
+# Commands top 30
+commands1(){
+    history|awk '{print $2}'|awk 'BEGIN {FS="|"} {print $1}'|sort|uniq -c|sort -rn|head -30
+}
+
+commands2(){
+    history|awk '{print $2" "$3}'|awk 'BEGIN {FS="|"} {print $1}'|sort|uniq -c|sort -rn|head -30
+}
