@@ -1,0 +1,169 @@
+[apply]
+
+# Detect whitespace errors when applying a patch
+whitespace = fix
+
+[core]
+
+# Use custom `.gitignore` and `.gitattributes`
+excludesFile = ~/.gitignore
+attributesFile = ~/.gitattributes
+
+# Make `git rebase` safer on macOS
+# More info: <http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/>
+trustCTime = false
+
+# Prevent showing files whose names contain non-ASCII symbols as unversioned.
+# http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
+preComposeUnicode = false
+
+# Speed up commands involving untracked files such as `git status`.
+# https://git-scm.com/docs/git-update-index#_untracked_cache
+untrackedCache = true
+
+[rebase]
+# Automatically create a temporary stash before the operation begins,
+# and apply it after the operation ends. This means that you can run
+# rebase on a dirty worktree. However, use with care: the final stash
+# application after a successful rebase might result
+# in non-trivial conflicts.
+autoStash = true
+# ?
+autoSquash = true
+
+[rerere]
+enabled = true
+
+[color]
+
+# Use colors in Git commands that are capable of colored output when
+# outputting to the terminal. (This is the default setting in Git ≥ 1.8.4.)
+ui = auto
+
+[color "branch"]
+current = yellow reverse
+local = yellow
+remote = green
+
+
+[color "diff"]
+# Meta info
+meta = yellow bold
+# Line info
+frag = magenta bold
+# Deletions
+old = red
+# Additions
+new = green
+
+whitespace = red reverse
+
+[color "status"]
+added = yellow
+changed = green
+untracked = cyan
+
+[alias]
+
+ali = "!git config --get-regexp '^alias\\.' | cut -c 7- | sed 's/ / = /'"
+aliases = "!git config --get-regexp '^alias\\.' | cut -c 7- | sed 's/ / = /'"
+
+ad = add
+bi = bisect
+br = branch -v
+ch = checkout
+co = checkout
+cl = clone
+cm = commit
+cma = commit --amend
+ci = commit
+cn = clean
+df = diff
+ft = fetch
+gr = grep
+in = init
+lo = log
+mr = merge
+pl = pull
+
+# Push
+ps = push
+psf = push -f
+
+# Rebase
+rb = rebase
+rbi = rebase -i
+rba = rebase --abort
+rbc = rebase --continue
+rbo = rebase --onto
+rbe = rebase --edit-todo
+
+rs = reset
+
+rt = remote -v
+
+sw = show
+
+# View the current working tree status using the short format
+st = status
+sts = status -s
+stl = status --long
+
+# Stash
+ss = stash
+ssu = stash --include-untracked
+ssa = stash apply
+ssl = stash list
+sss = stash show
+ssd = stash drop
+ssc = stash clear
+sv = !git stash --include-untracked && git stash apply stash@{0}
+
+# Functional aliases
+
+ty = cat-file -t
+dp = cat-file -p
+
+ls = log -1 HEAD
+lg = log --graph --abbrev-commit --decorate --all \n--format=format:\"%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(dim white) - %an%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n %C(white)%s%C(reset)\"
+ll = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue) <%an>%Creset' --abbrev-commit
+
+brb = !"export BRB_BR_NAME=`git branch | grep \\*  | cut -d ' ' -f2` && BRB_BBR_NAME=backup/`git rev-parse --short HEAD`/$BRB_BR_NAME && git ch -b $BRB_BBR_NAME && git ch $BRB_BR_NAME"
+brbl = !"git branch | grep -E backup/*"
+brbd = !"git branch -d `git branch | grep -E 'backup/[0-9a-f]{7,7}/*'` "
+brbD = !"git branch -D `git branch | grep -E backup/*` "
+
+[diff "bin"]
+
+# Use `hexdump` to diff binary files
+textConv = hexdump -v -C
+
+[help]
+
+# Automatically correct and execute mistyped commands
+autoCorrect = 1
+
+
+[merge]
+
+# Include summaries of merged commits in newly created merge commit messages
+log = true
+
+[push]
+default = simple
+
+[submodule]
+recurse = false
+
+[url "https://github.com/"]
+insteadOf = git://github.com/
+pushInsteadOf = git://github.com/
+[url "git@gitlab.com:"]
+insteadOf = https://gitlab.com/
+pushInsteadOf = https://gitlab.com/
+[url "git@github.com:"]
+insteadOf = https://github.com/
+pushInsteadOf = https://github.com/
+[url "git@bitbucket.org:"]
+insteadOf = https://bitbucket.org/
+pushInsteadOf = https://bitbucket.org/
