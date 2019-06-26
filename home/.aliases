@@ -3,6 +3,33 @@
 # Reload bash profile
 alias sss="source ~/.bash_profile"
 
+# Easier navigation: .., ..., ...., ....., ~ and -
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+alias .......='cd ../../../../../..'
+alias ........='cd ../../../../../../..'
+alias .........='cd ../../../../../../../..'
+alias ..........='cd ../../../../../../../../..'
+alias .2='cd ../..'
+alias .3='cd ../../..'
+alias .4='cd ../../../..'
+alias .5='cd ../../../../..'
+alias .6='cd ../../../../../..'
+alias .7='cd ../../../../../../..'
+alias .8='cd ../../../../../../../..'
+alias .9='cd ../../../../../../../../..'
+alias ~="cd ~" # `cd` is probably faster to type though
+alias -- -="cd -"
+
+# The alias is equivalent to the command in MS-DOS
+# The command CLS has appeared as a clear screen command
+# in many other BASIC dialects and command line interpreters,
+# because of its familiarity through being included in MS-DOS.
+alias cls='clear'
+
 # Simulate OSX's pbcopy and pbpaste on other platforms.
 if [ ! $(uname -s) = "Darwin" ]; then
     alias pbcopy='xclip -selection clipboard'
