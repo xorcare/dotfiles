@@ -129,10 +129,11 @@ ls = log -1 HEAD
 lg = log --graph --abbrev-commit --decorate --all \n--format=format:\"%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(dim white) - %an%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n %C(white)%s%C(reset)\"
 ll = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue) <%an>%Creset' --abbrev-commit
 
-brb = !"export BRB_BR_NAME=`git branch | grep \\*  | cut -d ' ' -f2` && BRB_BBR_NAME=backup/`git rev-parse --short HEAD`/$BRB_BR_NAME && git ch -b $BRB_BBR_NAME && git ch $BRB_BR_NAME"
-brbl = !"git branch | grep -E backup/*"
-brbd = !"git branch -d `git branch | grep -E 'backup/[0-9a-f]{7,7}/*'` "
-brbD = !"git branch -D `git branch | grep -E backup/*` "
+# Backup branch head ref to the another branch.
+brb = !"execute (){ branch_from=`git branch | grep \\*  | cut -d ' ' -f2` && [ ! -z "${branch_from}" ] && branch_to=backup/`git rev-parse --short HEAD`/${branch_from} && [ ! -z "${branch_to}" ]  && git ch -b ${branch_to} || false && git ch ${branch_from} || false; } && execute; unset execute;"
+brbl = !"git branch | grep -E backup/[0-9a-f]{7}/.*"
+brbd = !"git branch -d `git brbl`"
+brbD = !"git branch -D `git brbl`"
 
 [diff "bin"]
 
