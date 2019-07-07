@@ -55,6 +55,7 @@ brew install tarsnap
 brew install transmission
 
 brew cask install jetbrains-toolbox
+brew cask install visual-studio-code
 
 # Remove outdated versions from the cellar.
 brew cleanup
