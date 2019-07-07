@@ -46,3 +46,7 @@ export TIME_STYLE='full-iso'
 # the same path as your Go installation.
 # See https://github.com/golang/go/wiki/SettingGOPATH
 export GOPATH="${HOME}/go"
+
+# Configure the preferred bash editor.
+[ -x "$(command -v 'nano')" ] && export EDITOR='nano'
+[ -x "$(command -v 'code')" ] && export EDITOR='code --wait'
