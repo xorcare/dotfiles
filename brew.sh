@@ -57,6 +57,7 @@ brew install transmission
 brew cask install jetbrains-toolbox
 brew cask install visual-studio-code
 brew cask install vlc
+brew cask install 1password
 
 # Remove outdated versions from the cellar.
 brew cleanup
