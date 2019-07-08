@@ -60,6 +60,7 @@ brew cask install vlc
 brew cask install 1password
 brew cask install skype
 brew cask install firefox
+brew cask install telegram
 
 # Remove outdated versions from the cellar.
 brew cleanup
