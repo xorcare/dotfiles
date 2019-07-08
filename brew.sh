@@ -59,6 +59,7 @@ brew cask install visual-studio-code
 brew cask install vlc
 brew cask install 1password
 brew cask install skype
+brew cask install firefox
 
 # Remove outdated versions from the cellar.
 brew cleanup
