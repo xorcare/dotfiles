@@ -86,12 +86,17 @@ ft = fetch
 gr = grep
 in = init
 lo = log
-mr = merge
 pl = pull
 
 # Push
 ps = push
 psf = push -f
+
+# Merge
+mr = merge
+mra = merge --abort
+mrc = merge --continue
+mrq = merge --quit
 
 # Rebase
 rb = rebase
