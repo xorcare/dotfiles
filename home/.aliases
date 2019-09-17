@@ -40,7 +40,6 @@ alias l='ls -l'
 alias lh='ls -lh'
 alias lha='ls -lha'
 alias lhf='ls -lhF'
-alias cls='clear'
 
 # Simulate OSX's pbcopy and pbpaste on other platforms.
 if [ ! $(uname -s) = "Darwin" ]; then
