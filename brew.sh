@@ -62,10 +62,5 @@ brew cask install skype
 brew cask install firefox
 brew cask install telegram
 
-# Install free NTFS driver for Mac OS
-# https://www.tuxera.com/community/open-source-ntfs-3g
-brew cask install osxfuse
-brew install ntfs-3g
-
 # Remove outdated versions from the cellar.
 brew cleanup
