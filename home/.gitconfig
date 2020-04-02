@@ -151,7 +151,7 @@ textConv = hexdump -v -C
 [help]
 
 # Automatically correct and execute mistyped commands
-autoCorrect = 1
+autoCorrect = 10
 
 
 [merge]
