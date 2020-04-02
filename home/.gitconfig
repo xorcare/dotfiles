@@ -153,7 +153,6 @@ textConv = hexdump -v -C
 # Automatically correct and execute mistyped commands
 autoCorrect = 10
 
-
 [merge]
 
 # Include summaries of merged commits in newly created merge commit messages
