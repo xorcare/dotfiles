@@ -77,8 +77,6 @@ br = branch -v
 ch = checkout
 co = checkout
 cl = clone
-cm = commit
-cma = commit --amend
 ci = commit
 cn = clean
 df = diff
@@ -87,6 +85,13 @@ gr = grep
 in = init
 lo = log
 pl = pull
+
+# Commit
+cm = commit
+cma = commit --all
+cmd = commit --amend
+cmad = commit -a --amend
+cman = commit -a --amend --no-edit
 
 # Push
 ps = push
