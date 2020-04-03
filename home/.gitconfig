@@ -91,10 +91,10 @@ pl = pull
 
 # Commit
 cm = commit
-cma = commit --all
+cml = commit --all
 cmd = commit --amend
-cmad = commit -a --amend
-cman = commit -a --amend --no-edit
+cmt = commit --amend --no-edit
+cma = commit -a --amend --no-edit
 
 # Push
 ps = push
