@@ -12,5 +12,5 @@ tab_width = 4
 [Makefile]
 indent_style = tab
 
-[{*.sh, .aliases, .bash_profile, .bash_prompt, .bashrc, .export, ssh-keygen-ed25519, ssh-keygen-rsa}]
+[{*.sh, .aliases, .bash_profile, .bash_prompt, .bashrc, .export, ssh-keygen-ed25519, ssh-keygen-rsa, .zshrc}]
 indent_style = tab
