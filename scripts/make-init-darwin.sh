@@ -46,6 +46,11 @@ brew install bash-completion2
 # Install GnuPG to enable PGP-signing commits.
 brew install gnupg
 
+# The Heroku Command Line Interface (CLI) Download and install.
+# https://devcenter.heroku.com/articles/heroku-cli
+brew tap heroku/brew
+brew install heroku
+
 # Install font tools.
 brew tap bramstein/webfonttools
 brew install sfnt2woff \
