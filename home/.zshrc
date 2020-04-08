@@ -73,6 +73,7 @@ plugins=(
     git
     git-auto-fetch
     golang
+    heroku
 )
 
 source $ZSH/oh-my-zsh.sh
