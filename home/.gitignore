@@ -245,8 +245,6 @@ tags
 
 ## User settings
 xcuserdata/
-.idea
-.vscode
 
 ## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
 *.xcscmblueprint
@@ -277,3 +275,7 @@ DerivedData/
 # This is a convenient directory for placing files that should not fall into
 # the history of the project but are used in the work.
 _
+
+### Custom enumeration of ignored files
+.idea
+.vscode
