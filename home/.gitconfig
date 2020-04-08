@@ -185,4 +185,4 @@ insteadOf = https://bitbucket.org/
 pushInsteadOf = https://bitbucket.org/
 
 [include] ; https://git-scm.com/docs/git-config#_includes
-path = ~/.gitlocal ; Include local user settings, for example `user.name` and `user.email`.
+path = ~/.gituserconfig ; Include local user settings, for example `user.name` and `user.email`.
