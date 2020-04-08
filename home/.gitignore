@@ -272,3 +272,8 @@ DerivedData/
 !*.xcworkspace/contents.xcworkspacedata
 /*.gcno
 
+
+### Underscore directory
+# This is a convenient directory for placing files that should not fall into
+# the history of the project but are used in the work.
+_
