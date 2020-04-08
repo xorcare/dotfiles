@@ -7,13 +7,17 @@ source "$DOTFILES_ROOT/scripts/func-wait-for-user.sh"
 echo "You want to start the installation of tools with Homebrew. Are you sure?"
 wait_for_user;
 
+# Downloads
+curl -fsSL 'https://raw.githubusercontent.com/Homebrew/install/master/install.sh' > "$DOTFILES_ROOT/installers/brew-install.sh"
+curl -fsSL 'https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh' > "$DOTFILES_ROOT/installers/ohmyzsh-install.sh"
+shasum --algorithm 256 installers/*
+shasum --algorithm 256 --check "$DOTFILES_ROOT/installers-sha256.sum"
+
+$SHELL "$DOTFILES_ROOT/installers/ohmyzsh-install.sh" --skip-chsh
+
 if [ ! -x "$(command -v 'brew')" ]; then
 	# Install Homebrew https://brew.sh
-	file=$(mktemp)
-	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | tee "$file" | shasum --algorithm 256
-	cat "$file" | shasum --algorithm 256 --check "$DOTFILES_ROOT/brew-install-sh-sha256.sum"
-	/bin/bash -c "$(cat "$file")"
-	unset file
+	$SHELL "$DOTFILES_ROOT/installers/brew-install.sh"
 else
 	# Make sure we’re using the latest Homebrew.
 	brew update
