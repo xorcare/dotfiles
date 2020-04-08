@@ -72,6 +72,7 @@ plugins=(
     brew
     git
     git-auto-fetch
+    golang
 )
 
 source $ZSH/oh-my-zsh.sh
