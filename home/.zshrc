@@ -71,6 +71,7 @@ ZSH_THEME="robbyrussell"
 plugins=(
     brew
     git
+    git-auto-fetch
 )
 
 source $ZSH/oh-my-zsh.sh
