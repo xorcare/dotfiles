@@ -142,8 +142,8 @@ ty = cat-file -t
 dp = cat-file -p
 
 ls = log -1 HEAD
-lg = log --graph --abbrev-commit --decorate --all \n--format=format:\"%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(dim white) - %an%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n %C(white)%s%C(reset)\"
-ll = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue) <%an>%Creset' --abbrev-commit
+lg = log --graph --abbrev-commit --decorate --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(dim white) - \"%an\" <%ae>%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n %C(white)%s%C(reset)'
+ll = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue) \"%an\" <%ae>%Creset' --abbrev-commit
 
 # Backup branch head ref to the another branch.
 brb = !"execute (){ branch_from=`git branch | grep \\*  | cut -d ' ' -f2` && [ ! -z "${branch_from}" ] && branch_to=backup/`git rev-parse --short HEAD`/${branch_from} && [ ! -z "${branch_to}" ]  && git ch -b ${branch_to} || false && git ch ${branch_from} || false; } && execute; unset execute;"
