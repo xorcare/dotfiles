@@ -75,6 +75,7 @@ brew install htop
 brew install wget
 brew install tarsnap
 brew install transmission
+brew install shellcheck
 
 brew cask install jetbrains-toolbox
 brew cask install visual-studio-code
