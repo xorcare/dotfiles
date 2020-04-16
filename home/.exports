@@ -4,7 +4,7 @@
 export EDITOR='vim';
 
 # Enable persistent REPL history for `node`.
-export NODE_REPL_HISTORY='~/.node_history';
+export NODE_REPL_HISTORY="${HOME}/.node_history";
 # Allow 32³ entries; the default is 1000.
 export NODE_REPL_HISTORY_SIZE='32768';
 # Use sloppy mode by default, matching web browsers.
@@ -48,7 +48,7 @@ export TIME_STYLE='full-iso'
 export GOPATH="${HOME}/go"
 
 # Add `$GOPATH/bin` to the `$PATH`
-export PATH="$PATH:$GOPATH/bin"
+export PATH="${PATH}:${GOPATH}/bin"
 
 # Configure the preferred bash editor.
 [ -x "$(command -v 'nano')" ] && export EDITOR='nano'
