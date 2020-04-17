@@ -1,0 +1,7 @@
+if [ -f "${HOME}/.aliases" ]; then
+    # shellcheck source=.aliases,~/.aliases
+    . ~/.aliases
+fi
+
+# Reload zsh profile
+alias sss='source ~/.zshrc'
