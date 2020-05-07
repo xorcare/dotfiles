@@ -116,6 +116,7 @@ rbe = rebase --edit-todo
 
 rs = reset
 rsh = reset --hard
+rsl = reset HEAD~1
 
 rt = remote -v
 
