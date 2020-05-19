@@ -21,6 +21,7 @@ alias .8='cd ../../../../../../../..'
 alias .9='cd ../../../../../../../../..'
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
+alias cdt='cd $(mktemp -d)'
 
 # The alias is equivalent to the command in MS-DOS
 # The command CLS has appeared as a clear screen command
