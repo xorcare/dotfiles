@@ -84,6 +84,11 @@ brew cask install 1password
 brew cask install skype
 brew cask install firefox
 
+# Just hold the ⌘-Key a bit longer to get a list of all active short cuts of
+# the current application. It's as simple as that.
+# https://mediaatelier.com/CheatSheet
+brew cask install cheatsheet
+
 # Remove outdated versions from the cellar.
 brew cleanup
 
