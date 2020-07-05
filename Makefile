@@ -22,6 +22,7 @@ deinit: logs ## Used for uninstallation of tools in the environment.
 diff: logs ## Shows the difference between files in the repository and files in the home directory.
 	@diff -r "$(HOME)" '$(PWD)/home' \
 	| grep '$(PWD)/home' \
+	| grep -v '.DS_Store' \
 	| awk '{print $4}' \
 	| while read -r line; do echo $$line; $$line; echo; done \
 	| $(LOGGER)
