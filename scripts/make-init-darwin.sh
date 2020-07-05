@@ -11,7 +11,7 @@ wait_for_user;
 curl -fsSL 'https://raw.githubusercontent.com/Homebrew/install/master/install.sh' > "$DOTFILES_ROOT/installers/brew-install.sh"
 curl -fsSL 'https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh' > "$DOTFILES_ROOT/installers/ohmyzsh-install.sh"
 shasum --algorithm 256 installers/*
-shasum --algorithm 256 --check "$DOTFILES_ROOT/installers-sha256.sum"
+shasum --algorithm 256 --check "$DOTFILES_ROOT/installers-sha256.sum" || exit $?
 
 $SHELL "$DOTFILES_ROOT/installers/ohmyzsh-install.sh" --skip-chsh
 
