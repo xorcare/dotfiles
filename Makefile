@@ -12,7 +12,7 @@ WHOAMI=$(shell whoami)
 LATEST_LOG_FILE_NAME=by $(WHOAMI) on $(HOSTNAME) exec make $@.log
 LOGGER = tee "logs/$(DATE) $(LATEST_LOG_FILE_NAME)" | tee "logs/latest $(LATEST_LOG_FILE_NAME)"
 
-.PHONY: deinit diff help init install
+.PHONY: deinitialize diff help initialize install
 
 logs:
 	mkdir logs
