@@ -23,11 +23,12 @@ deinit: logs ## Used for uninstallation of tools in the environment.
 	@$(SHELL) "scripts/make-deinit-$(OS_NAME).sh" | $(LOGGER)
 
 diff: logs ## Shows the difference between files in the repository and files in the home directory.
-	@diff -r "$(HOME)" '$(PWD)/home' \
-	| grep '$(PWD)/home' \
-	| grep -v '.DS_Store' \
-	| awk '{print $4}' \
-	| while read -r line; do echo $$line; $$line; echo; done \
+	@diff --ignore-blank-lines \
+	--recursive \
+	--show-c-function \
+	--exclude '.DS_Store' \
+	'$(HOME)' '$(PWD)/home' \
+	| grep -v 'Only in $(HOME):' \
 	| $(LOGGER)
 
 help: ## Print this help.
