@@ -1,14 +1,14 @@
 OS_NAME=$$(uname -s | tr [A-Z] [a-z])
 
 export SHELL:=/bin/bash
+# DOTFILES_ROOT only needed for auxiliary scripts located in the scripts directory.
 export DOTFILES_ROOT?=$(PWD)
 
-DOTFILES_LOGS=$(DOTFILES_ROOT)/logs
 DATE=$$(date -u '+%Y-%m-%dT%H:%M:%S%z')
 HOSTNAME=$$(uname -n)
 WHOAMI=$(shell whoami)
 LATEST_LOG_FILE_NAME=by $(WHOAMI) on $(HOSTNAME) exec make $@.log
-LOGGER = tee "$(DOTFILES_LOGS)/$(DATE) $(LATEST_LOG_FILE_NAME)" | tee "$(DOTFILES_LOGS)/latest $(LATEST_LOG_FILE_NAME)"
+LOGGER = tee "logs/$(DATE) $(LATEST_LOG_FILE_NAME)" | tee "logs/latest $(LATEST_LOG_FILE_NAME)"
 
 .PHONY: deinit diff help init install
 
