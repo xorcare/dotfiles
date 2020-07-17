@@ -1,3 +1,5 @@
+.DEFAULT_GOAL:= install
+
 OS_NAME=$$(uname -s | tr [A-Z] [a-z])
 
 export SHELL:=/bin/bash
@@ -11,8 +13,6 @@ LATEST_LOG_FILE_NAME=by $(WHOAMI) on $(HOSTNAME) exec make $@.log
 LOGGER = tee "logs/$(DATE) $(LATEST_LOG_FILE_NAME)" | tee "logs/latest $(LATEST_LOG_FILE_NAME)"
 
 .PHONY: deinit diff help init install
-
-all: init install
 
 logs:
 	mkdir logs
