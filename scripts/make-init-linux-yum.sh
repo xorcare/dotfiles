@@ -20,5 +20,8 @@ sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.m
 yum check-update
 sudo yum install code -y
 sudo yum install shellcheck
+# Lightweight and flexible command-line JSON processor.
+# NOTE: it's need for working scripts from home/bin.
+sudo yum install jq
 
 sudo yum autoremove

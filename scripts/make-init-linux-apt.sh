@@ -21,5 +21,8 @@ sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microso
 sudo apt update
 sudo apt install code -y
 sudo apt install shellcheck
+# Lightweight and flexible command-line JSON processor.
+# NOTE: it's need for working scripts from home/bin.
+sudo apt install jq
 
 sudo apt autoremove
