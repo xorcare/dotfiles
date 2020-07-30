@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# Copyright (c) 2020 Vasiliy Vasilyuk. All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+readonly BITBUCKET_USERNAME BITBUCKET_PRIVATE_TOKEN
+
+echo -e "\n\e[33mWARNING: Be careful, this script cannot download more than 100 repositories!\e[0m\n"
+
+readonly REPOSITORIES=$(curl --user "${BITBUCKET_USERNAME}:${BITBUCKET_PRIVATE_TOKEN}"  \
+ "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_USERNAME}?pagelen=100" | \
+ jq --raw-output --compact-output ".values[] | .links | .html | .href")
+
+readonly DATE="$(date)"
+readonly WORKDIR="${DATE}/bitbucket.org/${BITBUCKET_USERNAME}"
+
+mkdir -p "${WORKDIR}"
+cd "${WORKDIR}"
+
+for repository in ${REPOSITORIES}; do
+    git clone --verbose ${repository}
+done
+
+
+# https://stackoverflow.com/a/4754797/7481796
+function dumpBranches() {
+    git fetch -p --all --tags --verbose
+    for branch in $(git branch --all | grep '^\s*remotes' | egrep --invert-match '(:?HEAD|master)$'); do
+        git branch --track "${branch##*/}" "$branch"
+    done
+}
+
+readonly DIRECTORIES=$(ls)
+
+for directory in ${DIRECTORIES}; do
+    cd ${directory}
+    dumpBranches
+    cd -
+done

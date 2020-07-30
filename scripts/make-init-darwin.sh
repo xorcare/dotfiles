@@ -76,6 +76,9 @@ brew install wget
 brew install tarsnap
 brew install transmission
 brew install shellcheck
+# Lightweight and flexible command-line JSON processor.
+# NOTE: it's need for working scripts from home/bin.
+brew install jq
 
 brew cask install jetbrains-toolbox
 brew cask install visual-studio-code
