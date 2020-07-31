@@ -31,6 +31,10 @@ diff: logs ## Shows the difference between files in the repository and files in 
 	| grep -v 'Only in $(HOME):' \
 	| $(LOGGER)
 
+diff-check: diff ## Outputs a difference and exit with an error if there are differences.
+	@find home -type f | while read filepath; do diff $${filepath} "$$HOME/$${filepath#"home"}" \
+	|| exit 1 ; done
+
 help: ## Print this help.
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
 	awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
