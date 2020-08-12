@@ -5,25 +5,25 @@
 source "$DOTFILES_ROOT/scripts/func-wait-for-user.sh"
 
 echo "You want to start the installation of tools with Homebrew. Are you sure?"
-wait_for_user;
+wait_for_user
 
 # Downloads
-curl -fsSL 'https://raw.githubusercontent.com/Homebrew/install/master/install.sh' > "$DOTFILES_ROOT/installers/brew-install.sh"
-curl -fsSL 'https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh' > "$DOTFILES_ROOT/installers/ohmyzsh-install.sh"
+curl -fsSL 'https://raw.githubusercontent.com/Homebrew/install/master/install.sh' >"$DOTFILES_ROOT/installers/brew-install.sh"
+curl -fsSL 'https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh' >"$DOTFILES_ROOT/installers/ohmyzsh-install.sh"
 shasum --algorithm 256 installers/*
 shasum --algorithm 256 --check "$DOTFILES_ROOT/installers-sha256.sum" || exit $?
 
 $SHELL "$DOTFILES_ROOT/installers/ohmyzsh-install.sh" --skip-chsh
 
 if [ ! -x "$(command -v 'brew')" ]; then
-	# Install Homebrew https://brew.sh
-	$SHELL "$DOTFILES_ROOT/installers/brew-install.sh"
+  # Install Homebrew https://brew.sh
+  $SHELL "$DOTFILES_ROOT/installers/brew-install.sh"
 else
-	# Make sure we’re using the latest Homebrew.
-	brew update
-	# Upgrade any already-installed formulae.
-	brew upgrade
-fi;
+  # Make sure we’re using the latest Homebrew.
+  brew update
+  # Upgrade any already-installed formulae.
+  brew upgrade
+fi
 
 # Print Homebrew config for history.
 brew config -d -v
@@ -58,14 +58,14 @@ brew install heroku
 # Install font tools.
 brew tap bramstein/webfonttools
 brew install sfnt2woff \
-    sfnt2woff-zopfli \
-    woff2
+  sfnt2woff-zopfli \
+  woff2
 brew tap homebrew/cask-fonts
 brew cask install \
-    font-fira-code \
-    font-fira-mono \
-    font-fira-mono-for-powerline \
-    font-fira-sans
+  font-fira-code \
+  font-fira-mono \
+  font-fira-mono-for-powerline \
+  font-fira-sans
 
 # Install other useful binaries.
 brew install git
@@ -95,8 +95,10 @@ brew cask install cheatsheet
 # Remove outdated versions from the cellar.
 brew cleanup
 
-echo "List installed packages with Homebrew"; echo
+echo "List installed packages with Homebrew"
+echo
 
-brew list -l; echo
+brew list -l
+echo
 
 echo "Presets of tools for the '$(uname -s)' family of operating systems installed!"

@@ -1,6 +1,6 @@
 if [ -f "${HOME}/.aliases" ]; then
-    # shellcheck source=.aliases,~/.aliases
-    . ~/.aliases
+  # shellcheck source=.aliases,~/.aliases
+  . ~/.aliases
 fi
 
 # Reload zsh profile

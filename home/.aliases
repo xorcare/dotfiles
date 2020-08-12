@@ -42,8 +42,8 @@ alias lhf='ls -lhF'
 
 # Simulate OSX's pbcopy and pbpaste on other platforms.
 if [ ! "$(uname -s)" = "Darwin" ]; then
-    alias pbcopy='xclip -selection clipboard'
-    alias pbpaste='xclip -selection clipboard -o'
+  alias pbcopy='xclip -selection clipboard'
+  alias pbpaste='xclip -selection clipboard -o'
 fi
 
 # Show open ports, use netstat command to quickly
@@ -51,10 +51,10 @@ fi
 alias ports='netstat -tulanp'
 
 # Commands top 30
-commands1(){
-    history|awk '{print $2}'|awk 'BEGIN {FS="|"} {print $1}'|sort|uniq -c|sort -rn|head -30
+commands1() {
+  history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -rn | head -30
 }
 
-commands2(){
-    history|awk '{print $2" "$3}'|awk 'BEGIN {FS="|"} {print $1}'|sort|uniq -c|sort -rn|head -30
+commands2() {
+  history | awk '{print $2" "$3}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -rn | head -30
 }

@@ -69,12 +69,12 @@ ZSH_THEME="suvash"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    brew
-    git
-    git-auto-fetch
-    golang
-    heroku
-    tig
+  brew
+  git
+  git-auto-fetch
+  golang
+  heroku
+  tig
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -108,6 +108,6 @@ source $ZSH/oh-my-zsh.sh
 # Load the shell dotfiles, and then some:
 # * ~/.extra can be used for other settings you don’t want to commit.
 for file in ~/.{zsh_aliases,exports,extra}; do
-	[ -r "$file" ] && [ -f "$file" ] && source "$file";
-done;
-unset file;
+  [ -r "$file" ] && [ -f "$file" ] && source "$file"
+done
+unset file
