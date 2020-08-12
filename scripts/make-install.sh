@@ -5,16 +5,16 @@
 source "$DOTFILES_ROOT/scripts/func-wait-for-user.sh"
 
 function install() {
-	rsync --exclude '.git/' \
-		--exclude '.DS_Store' \
-		--exclude '.osx' \
-		-avh --no-perms './home/' "$HOME";
+  rsync --exclude '.git/' \
+    --exclude '.DS_Store' \
+    --exclude '.osx' \
+    -avh --no-perms './home/' "$HOME"
 }
 
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
-	install;
+  install
 else
-	echo "This may overwrite existing files in your home directory. Are you sure?"
-	wait_for_user;
-	install;
-fi;
+  echo "This may overwrite existing files in your home directory. Are you sure?"
+  wait_for_user
+  install
+fi

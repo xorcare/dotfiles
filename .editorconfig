@@ -1,16 +1,19 @@
 root = true
 
+# Configured using google style guide.
+# https://github.com/google/styleguide/blob/gh-pages/shellguide.md
 [*]
 charset = utf-8
 end_of_line = lf
-indent_size = 4
+indent_size = 2
 indent_style = space
 insert_final_newline = true
-max_line_length = 100
+max_line_length = 80
 tab_width = 4
 
 [Makefile]
+max_line_length = 100
 indent_style = tab
 
-[{*.sh, .aliases, .bash_profile, .bash_prompt, .bashrc, .export, ssh-keygen-ed25519, ssh-keygen-rsa, .zshrc}]
-indent_style = tab
+[*.md]
+max_line_length = 100

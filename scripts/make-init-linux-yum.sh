@@ -5,7 +5,7 @@
 source "$DOTFILES_ROOT/scripts/func-wait-for-user.sh"
 
 echo "You want to start the installation of tools with yum. Are you sure?"
-wait_for_user;
+wait_for_user
 
 sudo yum check-update
 
