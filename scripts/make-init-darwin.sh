@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-[[ -z "$DOTFILES_ROOT" ]] && echo 'Please set a variable $DOTFILES_ROOT or use Makefile!' && exit 1
+[[ -z "$DOTFILES_ROOT" ]] && echo "Please set a variable \$DOTFILES_ROOT or use Makefile!" && exit 1
 
+# shellcheck source=func-wait-for-user.sh
 source "$DOTFILES_ROOT/scripts/func-wait-for-user.sh"
 
 echo "You want to start the installation of tools with Homebrew. Are you sure?"
