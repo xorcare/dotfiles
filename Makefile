@@ -12,7 +12,7 @@ WHOAMI=$(shell whoami)
 LATEST_LOG_FILE_NAME=by $(WHOAMI) on $(HOSTNAME) exec make $@.log
 LOGGER = tee "logs/$(DATE) $(LATEST_LOG_FILE_NAME)" | tee "logs/latest $(LATEST_LOG_FILE_NAME)"
 
-.PHONY: deinitialize diff help initialize install
+.PHONY: deinitialize diff help initialize install check
 
 logs:
 	mkdir logs
@@ -44,3 +44,23 @@ initialize: logs installers ## Used for installation of tools to the environment
 
 install: logs ## Install environment with requiring confirmation.
 	@make diff && $(SHELL) 'scripts/make-install.sh' | $(LOGGER)
+
+check:
+	@if ! command -v 'shellcheck' &> /dev/null; then  \
+  		echo "Please install shellcheck! See https://www.shellcheck.net"; exit 1;\
+  	fi;
+	@shellcheck --external-sources --source-path=home \
+		home/.zsh_aliases \
+		home/bin/ssh-keygen-ed25519 \
+		home/bin/github-dump-repositories \
+		home/bin/gitlab-dump-repositories \
+		home/bin/ssh-keygen-rsa \
+		home/bin/bitbucket-dump-repositories \
+		home/.bashrc \
+		home/.zshrc \
+		home/.bash_prompt \
+		home/.bash_aliases \
+		home/.exports \
+		home/.bash_profile \
+		home/.aliases
+	@shellcheck --external-sources --source-path=scripts scripts/*.sh
