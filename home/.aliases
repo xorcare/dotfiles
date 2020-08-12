@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+
 # Reload bash profile
 alias sss="source ~/.bash_profile"
 
