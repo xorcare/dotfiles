@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+
 if [ -f "${HOME}/.aliases" ]; then
   # shellcheck source=.aliases
   . ~/.aliases
