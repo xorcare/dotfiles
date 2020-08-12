@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-[[ -z "$DOTFILES_ROOT" ]] && echo 'Please set a variable $DOTFILES_ROOT or use Makefile!' && exit 1
+[[ -z "$DOTFILES_ROOT" ]] && echo "Please set a variable \$DOTFILES_ROOT or use Makefile!" && exit 1
 
+# shellcheck source=func-wait-for-user.sh
 source "$DOTFILES_ROOT/scripts/func-wait-for-user.sh"
 
 function install() {
@@ -11,7 +12,7 @@ function install() {
     -avh --no-perms './home/' "$HOME"
 }
 
-if [ "$1" == "--force" -o "$1" == "-f" ]; then
+if [ "$1" == "--force" ] || [ "$1" == "-f" ]; then
   install
 else
   echo "This may overwrite existing files in your home directory. Are you sure?"
