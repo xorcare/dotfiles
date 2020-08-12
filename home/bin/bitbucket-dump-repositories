@@ -16,16 +16,16 @@ readonly DATE="$(date)"
 readonly WORKDIR="${DATE}/bitbucket.org/${BITBUCKET_USERNAME}"
 
 mkdir -p "${WORKDIR}"
-cd "${WORKDIR}"
+cd "${WORKDIR}" || exit
 
 for repository in ${REPOSITORIES}; do
-  git clone --verbose ${repository}
+  git clone --verbose "${repository}"
 done
 
 # https://stackoverflow.com/a/4754797/7481796
 function dumpBranches() {
   git fetch -p --all --tags --verbose
-  for branch in $(git branch --all | grep '^\s*remotes' | egrep --invert-match '(:?HEAD|master)$'); do
+  for branch in $(git branch --all | grep '^\s*remotes' | grep -E --invert-match '(:?HEAD|master)$'); do
     git branch --track "${branch##*/}" "$branch"
   done
 }
@@ -33,7 +33,7 @@ function dumpBranches() {
 readonly DIRECTORIES=$(ls)
 
 for directory in ${DIRECTORIES}; do
-  cd ${directory}
+  cd "${directory}" || exit
   dumpBranches
-  cd -
+  cd - || exit
 done
