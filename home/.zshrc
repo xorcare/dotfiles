@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -8,6 +10,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+# shellcheck disable=SC2034
 ZSH_THEME="suvash"
 
 # Set list of themes to pick from when loading at random
@@ -68,6 +71,7 @@ ZSH_THEME="suvash"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+# shellcheck disable=SC2034
 plugins=(
   brew
   git
@@ -77,7 +81,8 @@ plugins=(
   tig
 )
 
-source $ZSH/oh-my-zsh.sh
+# shellcheck disable=SC1090
+source "$ZSH/oh-my-zsh.sh"
 
 # User configuration
 
@@ -108,6 +113,7 @@ source $ZSH/oh-my-zsh.sh
 # Load the shell dotfiles, and then some:
 # * ~/.extra can be used for other settings you don’t want to commit.
 for file in ~/.{zsh_aliases,exports,extra}; do
+  # shellcheck disable=SC1090
   [ -r "$file" ] && [ -f "$file" ] && source "$file"
 done
 unset file
