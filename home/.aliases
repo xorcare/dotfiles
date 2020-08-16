@@ -53,10 +53,9 @@ fi
 alias ports='netstat -tulanp'
 
 # Commands top 30
-commands1() {
-  history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -rn | head -30
-}
-
-commands2() {
-  history | awk '{print $2" "$3}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -rn | head -30
+top30() {
+  local pattern="{print \$2}"
+  [ "$1" = 2 ] && pattern="{print \$2\" \"\$3}"
+  history | awk "${pattern}" | awk 'BEGIN {FS="|"} {print $1}' | sort |
+    uniq -c | sort -rn | head -30
 }
