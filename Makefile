@@ -58,7 +58,7 @@ check:
 		home/bin/bitbucket-dump-repositories \
 		home/.bashrc \
 		home/.zshrc \
-		home/.bash_prompt \
+		home/.prompt \
 		home/.bash_aliases \
 		home/.exports \
 		home/.bash_profile \
