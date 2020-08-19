@@ -28,10 +28,10 @@ readonly yellow
 export LESS_TERMCAP_md="${yellow}"
 
 # Don’t clear the screen after quitting a manual page.
-export MANPAGER='less -X'
+export MANPAGER='less -F -X -R'
 
 # Tells 'less' not to paginate if less than a page.
-export LESS="-F -X $LESS"
+export LESS="-F -X -R $LESS"
 
 # Avoid issues with `gpg` as installed via Homebrew.
 # https://stackoverflow.com/a/42265848/96656
