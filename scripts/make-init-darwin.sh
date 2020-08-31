@@ -81,6 +81,10 @@ brew install shellcheck
 # NOTE: it's need for working scripts from home/bin.
 brew install jq
 
+# This is required for the pprof tool to work.
+# https://stackoverflow.com/questions/26216628/go-pprof-not-working-properly
+brew install graphviz
+
 brew cask install jetbrains-toolbox
 brew cask install visual-studio-code
 brew cask install vlc
