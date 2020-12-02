@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+LANG='en_US.UTF-8' \
+  LANGUAGE='en_US.UTF-8' \
+  ssh-keygen -o \
+  -t "ecdsa" \
+  -a "1024" \
+  -b "521" \
+  -C "ECDSA $(date +'%d-%b-%Y %H:%M:%S %Z') $(uname -n)"
