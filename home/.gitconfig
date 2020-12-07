@@ -151,6 +151,10 @@ brbl = !"git branch | grep -E backup/[0-9a-f]{7}/.*"
 brbd = !"git branch -d `git brbl`"
 brbD = !"git branch -D `git brbl`"
 
+# git wip: What the heck was I just doing?
+# https://carolynvanslyck.com/blog/2020/12/git-wip
+wip = for-each-ref --sort='authordate:iso8601' --format=' %(color:green)%(authordate:relative)%09%(color:white)%(refname:short)' refs/heads
+
 [diff "bin"]
 
 # Use `hexdump` to diff binary files
