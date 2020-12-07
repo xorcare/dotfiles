@@ -151,6 +151,8 @@ brbl = !"git branch | grep -E backup/[0-9a-f]{7}/.*"
 brbd = !"git branch -d `git brbl`"
 brbD = !"git branch -D `git brbl`"
 
+wip = for-each-ref --sort='authordate:iso8601' --format=' %(color:green)%(authordate:relative)%09%(color:white)%(refname:short)' refs/heads
+
 [diff "bin"]
 
 # Use `hexdump` to diff binary files
