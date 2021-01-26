@@ -15,6 +15,9 @@ wait_for_user() {
   getc c
   # we test for \r and \n because some stuff does \r instead
   if ! [[ "$c" == $'\r' || "$c" == $'\n' ]]; then
+    echo
+    echo 'THE PROCESS WAS INTERRUPTED AT THE BEHEST OF THE USER!'
+    echo
     exit 1
   fi
   echo
