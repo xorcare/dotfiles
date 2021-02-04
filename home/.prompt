@@ -13,6 +13,7 @@ fi
 export TERM
 
 if tput setaf 1 &>/dev/null; then
+  tput sgr0
   if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
     base03=$(tput setaf 234)
     base02=$(tput setaf 235)
@@ -49,7 +50,7 @@ if tput setaf 1 &>/dev/null; then
     green=$(tput setaf 2)
   fi
   bold=$(tput bold)
-  reset=$(echo -n -e '\033[0m')
+  reset=$(tput sgr0)
 else
   bold=$(echo -n -e '\033[01m')
   reset=$(echo -n -e '\033[0m')
