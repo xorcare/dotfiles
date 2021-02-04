@@ -179,9 +179,9 @@ PS1+="${hostname_color}${hostname_placeholder}${reset}${bold}" # the fully quali
 PS1+=" in "                                                    # in
 PS1+="${workdir_color}${workdir_placeholder}${reset}${bold}"   # the current working directory
 PS1+="${GIT_PROMPT}${reset}"                                   # git repository details
+PS1+="${reset}"                                                # clear all decoration just in case
 PS1+="${new_line}"                                             # new line
 PS1+="${prompt_char} "                                         # initial character in the new line
-PS1+="${reset}"                                                # clear all decoration just in case
 
 PS2="${prompt_char}>  " # initial character in the second line
 
