@@ -6,6 +6,7 @@
 source "$DOTFILES_ROOT/scripts/func-wait-for-user.sh"
 
 function install() {
+  exit 33
   rsync --exclude '.git/' \
     --exclude '.DS_Store' \
     --exclude '.osx' \

@@ -21,9 +21,11 @@ sudo install -o root -g root -m 644 packages.microsoft.gpg /usr/share/keyrings/
 sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
 sudo apt update
 sudo apt install code -y
-sudo apt install shellcheck
+sudo apt install shellcheck -y
 # Lightweight and flexible command-line JSON processor.
 # NOTE: it's need for working scripts from home/bin.
-sudo apt install jq
+sudo apt install jq -y
 
 sudo apt autoremove
+
+exit 0

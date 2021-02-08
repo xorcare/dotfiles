@@ -5,26 +5,8 @@
 # shellcheck source=func-wait-for-user.sh
 source "$DOTFILES_ROOT/scripts/func-wait-for-user.sh"
 
-echo "You want to start the installation of tools with Homebrew. Are you sure?"
+echo "You want to start the installation of software with Homebrew. Are you sure?"
 wait_for_user
-
-# Downloads
-curl -fsSL 'https://raw.githubusercontent.com/Homebrew/install/master/install.sh' >"$DOTFILES_ROOT/installers/brew-install.sh"
-curl -fsSL 'https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh' >"$DOTFILES_ROOT/installers/ohmyzsh-install.sh"
-shasum --algorithm 256 installers/*
-shasum --algorithm 256 --check "$DOTFILES_ROOT/installers-sha256.sum" || exit $?
-
-$SHELL "$DOTFILES_ROOT/installers/ohmyzsh-install.sh" --skip-chsh
-
-if [ ! -x "$(command -v 'brew')" ]; then
-  # Install Homebrew https://brew.sh
-  $SHELL "$DOTFILES_ROOT/installers/brew-install.sh"
-else
-  # Make sure we’re using the latest Homebrew.
-  brew update
-  # Upgrade any already-installed formulae.
-  brew upgrade
-fi
 
 # Print Homebrew config for history.
 brew config -d -v
@@ -62,10 +44,9 @@ brew install sfnt2woff \
   sfnt2woff-zopfli \
   woff2
 brew tap homebrew/cask-fonts
-brew cask install \
+brew install --cask \
   font-fira-code \
   font-fira-mono \
-  font-fira-mono-for-powerline \
   font-fira-sans
 
 # Install other useful binaries.
@@ -77,6 +58,8 @@ brew install wget
 brew install tarsnap
 brew install transmission
 brew install shellcheck
+brew install ffmpeg
+
 # Lightweight and flexible command-line JSON processor.
 # NOTE: it's need for working scripts from home/bin.
 brew install jq
@@ -85,12 +68,37 @@ brew install jq
 # https://stackoverflow.com/questions/26216628/go-pprof-not-working-properly
 brew install graphviz
 
-brew cask install jetbrains-toolbox
-brew cask install visual-studio-code
-brew cask install vlc
-brew cask install 1password
-brew cask install skype
-brew cask install firefox
+brew install --cask jetbrains-toolbox
+brew install --cask visual-studio-code
+brew install --cask vlc
+brew install --cask firefox
+
+# Intel® Power Gadget is a software-based power usage monitoring tool
+# enabled for Intel® Core™ processors (from 2nd Generation up to 10th
+# Generation Intel® Core™ processors). Intel® Atom™ processors are not
+# supported. It is supported on Windows* and macOS* and includes an
+# application, driver, and libraries to monitor and estimate real-time
+# processor package power information in watts using the energy counters
+# in the processor. With this release, we are providing functionality to
+# evaluate power information on various platforms including notebooks,
+# desktops and servers.
+# https://software.intel.com/content/www/us/en/develop/articles/intel-power-gadget.html
+brew install intel-power-gadget
+
+# Typora gives you a seamless experience as both a reader and a writer.
+# It removes the preview window, mode switcher, syntax symbols of
+# markdown source.
+# https://typora.io
+brew install typora
+
+# Use ImageMagick® to create, edit, compose, or convert bitmap images. It
+# can read and write images in a variety of formats (over 200) including
+# PNG, JPEG, GIF, HEIC, TIFF, DPX, EXR, WebP, Postscript, PDF, and SVG.
+# ImageMagick can resize, flip, mirror, rotate, distort, shear and
+# transform images, adjust image colors, apply various special effects,
+# or draw text, lines, polygons, ellipses and Bézier curves.
+# https://imagemagick.org
+brew install imagemagick
 
 # The minimal, blazing-fast, and infinitely customizable prompt for any shell!
 # https://starship.rs
@@ -99,7 +107,15 @@ brew install starship
 # Just hold the ⌘-Key a bit longer to get a list of all active short cuts of
 # the current application. It's as simple as that.
 # https://mediaatelier.com/CheatSheet
-brew cask install cheatsheet
+brew install --cask cheatsheet
+
+# KeePassXC - Cross-Platform Password Manager
+# Never forget a password again.
+# Securely store passwords using industry standard encryption, quickly
+# auto-type them into desktop applications, and use our browser extension
+# to log into websites.
+# https://keepassxc.org
+brew install --cask keepassxc
 
 # Flash OS images to SD cards & USB drives, safely and easily.
 brew install balenaetcher
@@ -110,7 +126,7 @@ brew cleanup
 echo "List installed packages with Homebrew"
 echo
 
-brew list -l
+brew list --formula
 echo
 
 echo "Presets of tools for the '$(uname -s)' family of operating systems installed!"

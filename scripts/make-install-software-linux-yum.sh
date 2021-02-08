@@ -23,6 +23,8 @@ sudo yum install code -y
 sudo yum install shellcheck
 # Lightweight and flexible command-line JSON processor.
 # NOTE: it's need for working scripts from home/bin.
-sudo yum install jq
+sudo yum install jq -y
 
 sudo yum autoremove
+
+exit 0
