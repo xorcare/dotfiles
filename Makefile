@@ -51,11 +51,7 @@ check:
   	fi;
 	@shellcheck --external-sources --source-path=home \
 		home/.zsh_aliases \
-		home/bin/ssh-keygen-ed25519 \
-		home/bin/github-dump-repositories \
-		home/bin/gitlab-dump-repositories \
-		home/bin/ssh-keygen-rsa \
-		home/bin/bitbucket-dump-repositories \
+		home/bin/* \
 		home/.bashrc \
 		home/.zshrc \
 		home/.prompt \
