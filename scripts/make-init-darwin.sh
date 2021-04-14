@@ -97,6 +97,9 @@ brew cask install firefox
 # https://mediaatelier.com/CheatSheet
 brew cask install cheatsheet
 
+# Flash OS images to SD cards & USB drives, safely and easily.
+brew install balenaetcher
+
 # Remove outdated versions from the cellar.
 brew cleanup
 
