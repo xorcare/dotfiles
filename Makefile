@@ -31,7 +31,7 @@ install-software: ## Used for installation of tools to the environment.
 install: diff ## Install environment with requiring confirmation.
 	@'scripts/make-install.sh'
 
-check: ## Static analysis files existing in repository.
+check: shfmt ## Static analysis files existing in repository.
 	@if ! command -v 'shellcheck' &> /dev/null; then  \
   		echo "Please install shellcheck! See https://www.shellcheck.net"; exit 1;\
   	fi;
@@ -46,3 +46,20 @@ check: ## Static analysis files existing in repository.
 		home/.bash_profile \
 		home/.aliases
 	@shellcheck --external-sources --source-path=scripts scripts/*.sh
+
+shfmt:
+	@if ! command -v 'shfmt' &> /dev/null; then  \
+  		echo 'Please install shfmt! See https://github.com/mvdan/sh'; echo ''; \
+  		echo 'GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt'; echo ''; \
+  		exit 1; \
+  	fi;
+	@shfmt -l -w -d scripts/*.sh \
+		home/.zsh_aliases \
+		home/bin/* \
+		home/.bashrc \
+		home/.zshrc \
+		home/.prompt \
+		home/.bash_aliases \
+		home/.exports \
+		home/.bash_profile \
+		home/.aliases
