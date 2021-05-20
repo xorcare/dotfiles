@@ -77,8 +77,6 @@ aliases = "!git config --get-regexp '^alias\\.' | cut -c 7- | sed 's/ / = /'"
 ad = add
 bi = bisect
 br = branch -v
-ch = checkout
-co = checkout
 cl = clone
 ci = commit
 cn = clean
@@ -88,6 +86,11 @@ gr = grep
 in = init
 lo = log
 pl = pull
+
+# Checkout
+ch = checkout
+chf = checkout -f
+chb = checkout -b
 
 # Commit
 cm = commit
