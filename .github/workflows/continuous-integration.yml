@@ -1,0 +1,37 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  static-analysis:
+    name: Static analysis
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Installing the shellcheck tool
+      run: |
+        scversion="stable"
+        wget -qO- "https://github.com/koalaman/shellcheck/releases/download/${scversion?}/shellcheck-${scversion?}.linux.x86_64.tar.xz" | tar -xJv
+        sudo cp "shellcheck-${scversion}/shellcheck" /usr/bin/
+        shellcheck --version
+    - name: Running checks
+      run: make check
+  check-installer:
+    name: Checking the installation
+    strategy:
+      matrix:
+        os:
+        - 'ubuntu-18.04'
+        - 'ubuntu-20.04'
+        - 'macos-10.15'
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Checking the installation of dotfiles on ${{ matrix.os }}
+      run: make install
+    - name: Checking the installation of software on ${{ matrix.os }}
+      run: make install-software
