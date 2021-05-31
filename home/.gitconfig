@@ -6,6 +6,14 @@ addIgnoredFile = false
 # Detect whitespace errors when applying a patch
 whitespace = fix
 
+[init]
+
+# Sets overriding the default branch name e.g. when initializing a new repository.
+# https://git-scm.com/docs/git-config#Documentation/git-config.txt-initdefaultBranch
+#
+# git config --global init.defaultBranch main
+defaultBranch=main
+
 [core]
 
 # Use custom `.gitignore` and `.gitattributes`
