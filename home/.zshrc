@@ -1,4 +1,5 @@
 # shellcheck shell=bash
+# shellcheck disable=SC1091
 # shellcheck disable=SC2034
 
 # If you come from bash you might have to change your $PATH.
