@@ -92,6 +92,10 @@ brew cask install 1password
 brew cask install skype
 brew cask install firefox
 
+# The minimal, blazing-fast, and infinitely customizable prompt for any shell!
+# https://starship.rs
+brew install starship
+
 # Just hold the ⌘-Key a bit longer to get a list of all active short cuts of
 # the current application. It's as simple as that.
 # https://mediaatelier.com/CheatSheet

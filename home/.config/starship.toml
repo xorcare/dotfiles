@@ -1,0 +1,14 @@
+# https://starship.rs/config/#directory
+[directory]
+truncate_to_repo = false
+truncation_length = 8
+truncation_symbol = "…/"
+
+# https://starship.rs/config/#username
+[username]
+show_always = true
+format = "[$user]($style) at "
+
+# https://starship.rs/config/#hostname
+[hostname]
+ssh_only = false

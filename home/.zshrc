@@ -116,3 +116,6 @@ for file in ~/.{prompt,zsh_aliases,exports,extra}; do
   [ -r "$file" ] && [ -f "$file" ] && source "$file"
 done
 unset file
+
+# Initialize starship.rs prompt.
+[ -x "$(command -v 'starship')" ] && eval "$(starship init zsh)"
