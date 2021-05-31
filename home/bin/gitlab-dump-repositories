@@ -8,12 +8,14 @@ readonly GITLAB_USERNAME GITLAB_PRIVATE_TOKEN
 
 echo -e "\n\e[33mWARNING: Be careful, this script cannot download more than 100 repositories!\e[0m\n"
 
-readonly REPOSITORIES=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_PRIVATE_TOKEN" \
+REPOSITORIES=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_PRIVATE_TOKEN" \
   "https://gitlab.com/api/v4/users/${GITLAB_USERNAME}/projects?per_page=100" |
   jq --raw-output --compact-output ".[] | .web_url")
 
-readonly DATE="$(date)"
-readonly WORKDIR="${DATE}/gitlab.com/${GITLAB_USERNAME}"
+DATE="$(date)"
+WORKDIR="${DATE}/gitlab.com/${GITLAB_USERNAME}"
+
+readonly REPOSITORIES DATE WORKDIR
 
 mkdir -p "${WORKDIR}"
 cd "${WORKDIR}" || exit
@@ -30,7 +32,7 @@ function dumpBranches() {
   done
 }
 
-readonly DIRECTORIES=$(ls)
+DIRECTORIES=$(ls) && readonly DIRECTORIES
 
 for directory in ${DIRECTORIES}; do
   cd "${directory}" || exit
