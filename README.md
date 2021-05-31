@@ -36,10 +36,10 @@ official site [Homebrew](https://brew.sh)
 
 ### Software installation
 
-You can install the software using the scripts described in the ** scripts ** directory, for
+You can install the software using the scripts described in the **scripts** directory, for
 software installation on macOS using the brew tool, for Linux standard package managers with the
 addition of third-party repositories. To start the installation, execute the following the command
-in the directory with the ** dotfiles ** project:
+in the directory with the **dotfiles** project:
 
 ```bash
 make install-software
