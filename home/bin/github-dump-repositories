@@ -8,12 +8,14 @@ readonly GITHUB_USERNAME GITHUB_PRIVATE_TOKEN
 
 echo -e "\n\e[33mWARNING: Be careful, this script cannot download more than 100 repositories!\e[0m\n"
 
-readonly REPOSITORIES=$(curl --user "${GITHUB_USERNAME}:${GITHUB_PRIVATE_TOKEN}" \
+REPOSITORIES=$(curl --user "${GITHUB_USERNAME}:${GITHUB_PRIVATE_TOKEN}" \
   "https://api.github.com/user/repos?sort=pushed&per_page=100" |
   jq --raw-output --compact-output ".[] | .clone_url")
 
-readonly DATE="$(date)"
-readonly WORKDIR="${DATE}/github.com/${GITHUB_USERNAME}"
+DATE="$(date)"
+WORKDIR="${DATE}/github.com/${GITHUB_USERNAME}"
+
+readonly REPOSITORIES DATE WORKDIR
 
 mkdir -p "${WORKDIR}"
 cd "${WORKDIR}" || exit
@@ -30,7 +32,7 @@ function dumpBranches() {
   done
 }
 
-readonly DIRECTORIES=$(ls)
+DIRECTORIES=$(ls) && readonly DIRECTORIES
 
 for directory in ${DIRECTORIES}; do
   cd "${directory}" || exit

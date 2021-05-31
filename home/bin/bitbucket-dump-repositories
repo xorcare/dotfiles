@@ -8,12 +8,14 @@ readonly BITBUCKET_USERNAME BITBUCKET_PRIVATE_TOKEN
 
 echo -e "\n\e[33mWARNING: Be careful, this script cannot download more than 100 repositories!\e[0m\n"
 
-readonly REPOSITORIES=$(curl --user "${BITBUCKET_USERNAME}:${BITBUCKET_PRIVATE_TOKEN}" \
+REPOSITORIES=$(curl --user "${BITBUCKET_USERNAME}:${BITBUCKET_PRIVATE_TOKEN}" \
   "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_USERNAME}?pagelen=100" |
   jq --raw-output --compact-output ".values[] | .links | .html | .href")
 
-readonly DATE="$(date)"
-readonly WORKDIR="${DATE}/bitbucket.org/${BITBUCKET_USERNAME}"
+DATE="$(date)"
+WORKDIR="${DATE}/bitbucket.org/${BITBUCKET_USERNAME}"
+
+readonly REPOSITORIES DATE WORKDIR
 
 mkdir -p "${WORKDIR}"
 cd "${WORKDIR}" || exit
@@ -30,7 +32,7 @@ function dumpBranches() {
   done
 }
 
-readonly DIRECTORIES=$(ls)
+DIRECTORIES=$(ls) && readonly DIRECTORIES
 
 for directory in ${DIRECTORIES}; do
   cd "${directory}" || exit

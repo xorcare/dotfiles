@@ -2,6 +2,7 @@
 # shellcheck disable=SC2034
 
 # If you come from bash you might have to change your $PATH.
+# shellcheck disable=SC1091
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
