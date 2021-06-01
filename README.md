@@ -12,8 +12,8 @@ make install
 ```
 
 **Note:** On macOS Catalina, the default interactive shell is now zsh. To update your account to use
-bash, please run `chsh-s/bin/bash`. For more For details, please
-visit https://support.apple.com/kb/HT208050.
+bash, please run `chsh -s /bin/bash`. For more For details, please
+visit https://support.apple.com/kb/HT208050
 
 ### Optional, install oh-my-zsh
 
@@ -23,7 +23,7 @@ Use the command from the official site [oh-my-zsh](https://ohmyz.sh/#install)
 /bin/bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
-## Installing software (software)
+## Installing software
 
 ### Install macOS dependencies
 
