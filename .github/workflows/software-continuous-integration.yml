@@ -1,0 +1,28 @@
+name: Software Continuous Integration
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+    - 'scripts/make-install-software*.sh'
+  pull_request:
+    branches: [ main ]
+    paths:
+    - 'scripts/make-install-software*.sh'
+  schedule:
+  - cron: '0 0 1 * *'
+
+jobs:
+  check-installer:
+    name: Checking the software installation
+    strategy:
+      matrix:
+        os:
+        - 'ubuntu-18.04'
+        - 'ubuntu-20.04'
+        - 'macos-10.15'
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Checking the installation of software on ${{ matrix.os }}
+      run: make install-software
