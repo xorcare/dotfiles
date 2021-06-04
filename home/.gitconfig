@@ -197,4 +197,12 @@ pushInsteadOf = https://github.com/
 pushInsteadOf = https://bitbucket.org/
 
 [include] ; https://git-scm.com/docs/git-config#_includes
-path = ~/.gituserconfig ; Include local user settings, for example `user.name` and `user.email`.
+# `~/.gitconfig.local` it will store the global settings, but unlike
+# `~/.gitconfig` only those that are connected to a specific computer so-as
+# through a standard file, the settings are synchronized the same on all
+# computers that I usually use.
+# For example: `user.name` `user.email` `user.signingkey` etc...
+#
+# To add global parameters, use: git config --file ~/.gitconfig.local
+# For example: git config --file ~/.gitconfig.local user.name Lucky
+path = ~/.gitconfig.local
