@@ -12,3 +12,7 @@ format = "[$user]($style) at "
 # https://starship.rs/config/#hostname
 [hostname]
 ssh_only = false
+
+# https://starship.rs/config/#command-duration
+[cmd_duration]
+show_milliseconds = true
