@@ -3,15 +3,20 @@
 truncate_to_repo = false
 truncation_length = 8
 truncation_symbol = "…/"
+style = "bold cyan"
+read_only_style = "bold red"
 
 # https://starship.rs/config/#username
 [username]
 show_always = true
 format = "[$user]($style) at "
+style_user = "bold blue"
+style_root = "bold magenta"
 
 # https://starship.rs/config/#hostname
 [hostname]
 ssh_only = false
+style = "bold yellow"
 
 # https://starship.rs/config/#command-duration
 [cmd_duration]
