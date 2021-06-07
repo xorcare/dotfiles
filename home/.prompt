@@ -155,6 +155,7 @@ if [[ "$(basename "$0")" == 'bash' ]] || [[ -n "$BASH" ]]; then
   hostname_placeholder="\h"
   workdir_placeholder="\w"
   prompt_char="\$"
+  GIT_PROMPT="\$(prompt_git \" on ${orange}\" \"${violet}\")"
 elif [[ "$(basename "$SHELL")" == 'zsh' ]]; then
   username_placeholder="%n"
   hostname_placeholder="%m"
@@ -164,9 +165,7 @@ else
   echo "failed to detect the current shell, message from ~/.prompt"
 fi
 
-if ! command -v 'git_prompt_info' &>/dev/null; then
-  GIT_PROMPT="\$(prompt_git \" on ${orange}\" \"${violet}\")"
-else
+if command -v 'git_prompt_info' &>/dev/null; then
   GIT_PROMPT="\$(out=\$(git_prompt_info);if [[ -n \$out ]]; then printf %s\" on \${orange}\$out\${reset}\";fi)\${bold}"
   GIT_PROMPT+="\$(out=\$(git_prompt_status);if [[ -n \$out ]]; then printf %s\" \${violet}[\$out]\${reset}\";fi)\${bold}"
 fi
