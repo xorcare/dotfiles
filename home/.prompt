@@ -172,7 +172,7 @@ else
 fi
 
 # Set the terminal title and prompt.
-PS1='${bold}'                                                  # initialize empty
+PS1="${bold}"                                                  # initialize empty
 PS1+="${username_color}${username_placeholder}${reset}${bold}" # the username of the current user
 PS1+=" at "                                                    # at
 PS1+="${hostname_color}${hostname_placeholder}${reset}${bold}" # the fully qualified domain name (FQDN) hostname
