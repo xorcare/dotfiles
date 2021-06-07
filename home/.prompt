@@ -150,7 +150,7 @@ function prompt_git() {
   fi
 }
 
-if [[ "$(basename "$0")" == 'bash' ]] || [[ -n "$BASH" ]]; then
+if [[ "$(basename "$SHELL")" == 'bash' ]] || [[ -n "$BASH" ]]; then
   username_placeholder="\u"
   hostname_placeholder="\h"
   workdir_placeholder="\w"
