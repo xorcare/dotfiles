@@ -81,8 +81,9 @@ plugins=(
   tig
 )
 
-# shellcheck disable=SC1090
-source "$ZSH/oh-my-zsh.sh"
+if [ -f "$ZSH/oh-my-zsh.sh" ]; then
+  source "$ZSH/oh-my-zsh.sh"
+fi
 
 # User configuration
 
