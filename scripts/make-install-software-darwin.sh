@@ -122,6 +122,9 @@ brew install --cask keepassxc
 # Flash OS images to SD cards & USB drives, safely and easily.
 brew install balenaetcher
 
+# Postgres C API library.
+brew install libpq
+
 # Remove outdated versions from the cellar.
 brew cleanup
 

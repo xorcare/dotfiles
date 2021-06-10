@@ -56,6 +56,9 @@ export GOPATH="${HOME}/go"
 # Add `$GOPATH/bin` to the `$PATH`
 export PATH="${PATH}:${GOPATH}/bin"
 
+# Postgres C API library.
+export PATH="${PATH}:/usr/local/opt/libpq/bin"
+
 # Configure the preferred bash editor.
 [ -x "$(command -v 'nano')" ] && export EDITOR='nano'
 [ -x "$(command -v 'code')" ] && export EDITOR='code --wait'
