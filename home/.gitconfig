@@ -107,6 +107,14 @@ cmd = commit --amend
 cmt = commit --amend --no-edit
 cma = commit -a --amend --no-edit
 
+# Cherry-pick
+cp = cherry-pick
+cpe = cherry-pick --edit
+cpc = cherry-pick --continue
+cps = cherry-pick --skip
+cpa = cherry-pick --abort
+cpq = cherry-pick --quit
+
 # Push
 ps = push
 psf = push -f
