@@ -1,9 +1,12 @@
 [advice]
+# git config --global advice.addIgnoredFile false
 addIgnoredFile = false
 
 [apply]
 
 # Detect whitespace errors when applying a patch
+#
+# git config --global apply.whitespace 'fix'
 whitespace = fix
 
 [init]
@@ -17,19 +20,28 @@ defaultBranch=main
 [core]
 
 # Use custom `.gitignore` and `.gitattributes`
+#
+# git config --global core.excludesFile '~/.gitignore'
 excludesFile = ~/.gitignore
+# git config --global core.attributesFile '~/.gitattributes'
 attributesFile = ~/.gitattributes
 
 # Make `git rebase` safer on macOS
 # More info: <http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/>
+#
+# git config --global core.trustCTime false
 trustCTime = false
 
 # Prevent showing files whose names contain non-ASCII symbols as unversioned.
 # http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
+#
+# git config --global core.preComposeUnicode false
 preComposeUnicode = false
 
 # Speed up commands involving untracked files such as `git status`.
 # https://git-scm.com/docs/git-update-index#_untracked_cache
+#
+# git config --global core.untrackedCache true
 untrackedCache = true
 
 [rebase]
@@ -38,20 +50,30 @@ untrackedCache = true
 # rebase on a dirty worktree. However, use with care: the final stash
 # application after a successful rebase might result
 # in non-trivial conflicts.
+#
+# git config --global rebase.autoStash true
 autoStash = true
 # ?
+#
+# git config --global rebase.autoSquash true
 autoSquash = true
 # If set to true, git rebase will use abbreviated command names in the todo list
 # https://mirrors.edge.kernel.org/pub/software/scm/git/docs/git-config.html
+#
+# git config --global rebase.abbreviateCommands true
 abbreviateCommands = true
 
 [rerere]
+
+# git config --global rerere.enabled true
 enabled = true
 
 [color]
 
 # Use colors in Git commands that are capable of colored output when
 # outputting to the terminal. (This is the default setting in Git ≥ 1.8.4.)
+#
+# git config --global color.ui auto
 ui = auto
 
 [color "branch"]
@@ -176,17 +198,25 @@ textConv = hexdump -v -C
 [help]
 
 # Automatically correct and execute mistyped commands
+#
+# git config --global help.autoCorrect 10
 autoCorrect = 10
 
 [merge]
 
 # Include summaries of merged commits in newly created merge commit messages
+#
+# git config --global merge.log true
 log = true
 
 [push]
+
+# git config --global push.default 'simple'
 default = simple
 
 [submodule]
+
+# git config --global submodule.recurse false
 recurse = false
 
 [url "https://github.com/"]
