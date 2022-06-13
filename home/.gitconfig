@@ -164,12 +164,6 @@ dp = cat-file -p
 ls = log -1 HEAD
 ll = log --graph --abbrev-commit --pretty=format:'%C(red)%h%C(reset) - %s %C(red)by %C(blue)\"%an\" <%ae> %C(green)(%cr)%C(yellow)%d'
 
-# Backup branch head ref to the another branch.
-brb = !"execute (){ branch_from=`git branch | grep \\*  | cut -d ' ' -f2` && [ ! -z "${branch_from}" ] && branch_to=backup/`git rev-parse --short HEAD`/${branch_from} && [ ! -z "${branch_to}" ]  && git ch -b ${branch_to} || false && git ch ${branch_from} || false; } && execute; unset execute;"
-brbl = !"git branch | grep -E backup/[0-9a-f]{7}/.*"
-brbd = !"git branch -d `git brbl`"
-brbD = !"git branch -D `git brbl`"
-
 # git wip: What the heck was I just doing?
 # https://carolynvanslyck.com/blog/2020/12/git-wip
 wip = for-each-ref --sort='authordate:iso8601' --format=' %(color:green)%(authordate:relative)%09%(color:white)%(refname:short)' refs/heads
