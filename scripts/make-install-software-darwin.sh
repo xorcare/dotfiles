@@ -95,6 +95,10 @@ brew install --cask keepassxc
 # Postgres C API library.
 brew install libpq
 
+# Install GPG Suite (without GPGMail) for comfort work with command line
+# tools and signing commits.
+brew install gpg-suite-no-mail
+
 # Remove outdated versions from the cellar.
 brew cleanup
 
