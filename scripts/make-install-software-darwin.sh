@@ -32,14 +32,6 @@ brew install findutils
 brew install bash
 brew install bash-completion2
 
-# Install GnuPG to enable PGP-signing commits.
-brew install gnupg
-
-# The Heroku Command Line Interface (CLI) Download and install.
-# https://devcenter.heroku.com/articles/heroku-cli
-brew tap heroku/brew
-brew install heroku
-
 # Install font tools.
 brew tap bramstein/webfonttools
 brew install sfnt2woff \
@@ -57,7 +49,6 @@ brew install tig
 brew install git-lfs
 brew install htop
 brew install wget
-brew install tarsnap
 brew install transmission
 brew install shellcheck
 brew install ffmpeg
@@ -74,24 +65,6 @@ brew install --cask jetbrains-toolbox
 brew install --cask visual-studio-code
 brew install --cask vlc
 brew install --cask firefox
-
-# Intel® Power Gadget is a software-based power usage monitoring tool
-# enabled for Intel® Core™ processors (from 2nd Generation up to 10th
-# Generation Intel® Core™ processors). Intel® Atom™ processors are not
-# supported. It is supported on Windows* and macOS* and includes an
-# application, driver, and libraries to monitor and estimate real-time
-# processor package power information in watts using the energy counters
-# in the processor. With this release, we are providing functionality to
-# evaluate power information on various platforms including notebooks,
-# desktops and servers.
-# https://software.intel.com/content/www/us/en/develop/articles/intel-power-gadget.html
-brew install intel-power-gadget
-
-# Typora gives you a seamless experience as both a reader and a writer.
-# It removes the preview window, mode switcher, syntax symbols of
-# markdown source.
-# https://typora.io
-brew install typora
 
 # Use ImageMagick® to create, edit, compose, or convert bitmap images. It
 # can read and write images in a variety of formats (over 200) including
@@ -118,9 +91,6 @@ brew install --cask cheatsheet
 # to log into websites.
 # https://keepassxc.org
 brew install --cask keepassxc
-
-# Flash OS images to SD cards & USB drives, safely and easily.
-brew install balenaetcher
 
 # Postgres C API library.
 brew install libpq
