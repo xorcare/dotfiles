@@ -50,7 +50,7 @@ check: shfmt ## Static analysis files existing in repository.
 shfmt:
 	@if ! command -v 'shfmt' &> /dev/null; then  \
   		echo 'Please install shfmt! See https://github.com/mvdan/sh'; echo ''; \
-  		echo 'GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt'; echo ''; \
+  		echo 'go install mvdan.cc/sh/v3/cmd/shfmt@latest'; echo ''; \
   		exit 1; \
   	fi;
 	@shfmt -l -w -d scripts/*.sh \
