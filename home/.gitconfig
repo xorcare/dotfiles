@@ -214,6 +214,9 @@ log = true
 # git config --global push.default 'simple'
 default = simple
 
+# git config --global push.autoSetupRemote true
+autoSetupRemote = true
+
 [submodule]
 
 # git config --global submodule.recurse false
