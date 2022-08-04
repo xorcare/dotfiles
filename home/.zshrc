@@ -113,7 +113,7 @@ fi
 
 # Load the shell dotfiles, and then some:
 # * ~/.extra can be used for other settings you don’t want to commit.
-for file in ~/.{prompt,zsh_aliases,exports,extra}; do
+for file in ~/.{prompt,zsh_aliases,exports,extra,chmod}; do
   # shellcheck disable=SC1090
   [ -r "$file" ] && [ -f "$file" ] && source "$file"
 done
