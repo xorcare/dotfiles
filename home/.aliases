@@ -59,3 +59,7 @@ top30() {
   history | awk "${pattern}" | awk 'BEGIN {FS="|"} {print $1}' | sort |
     uniq -c | sort -rn | head -30
 }
+
+alias fdate='date +"%Y-%m-%dT%H%M%S%z"'
+alias fdateu='date -u +"%Y-%m-%dT%H%M%S%z"'
+alias fdatez='date -u +"%Y-%m-%dT%H%M%SZ"'
