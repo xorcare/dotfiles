@@ -10,6 +10,14 @@ function install() {
     --exclude '.DS_Store' \
     --exclude '.osx' \
     -avh --no-perms './home/' "$HOME"
+
+  [ -d "$HOME/.ssh" ] && chmod 700 "$HOME/.ssh"
+  [ -d "$HOME/.ssh/config.d" ] && chmod 700 "$HOME/.ssh/config.d"
+  [ -f "$HOME/.ssh/config" ] && chmod 400 "$HOME/.ssh/config"
+  [ -f "$HOME/.ssh/*.pub" ] && chmod 644 "$HOME/.ssh/*.pub"
+  [ -f "$HOME/.ssh/authorized_keys" ] && chmod 600 "$HOME/.ssh/authorized_keys"
+  [ -f "$HOME/.ssh/known_hosts" ] && chmod 600 "$HOME/.ssh/known_hosts"
+  [ -f "$HOME/.ssh/config.d/00-bootstrap" ] && chmod 400 "$HOME/.ssh/config.d/00-bootstrap"
 }
 
 if [ "$1" == "--force" ] || [ "$1" == "-f" ]; then

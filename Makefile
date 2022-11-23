@@ -44,7 +44,6 @@ check: shfmt ## Static analysis files existing in repository.
 		home/.bash_aliases \
 		home/.exports \
 		home/.bash_profile \
-		home/.chmod \
 		home/.aliases
 	@shellcheck --external-sources --source-path=scripts scripts/*.sh
 
