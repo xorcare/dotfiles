@@ -110,12 +110,10 @@ br = branch -v
 cl = clone
 ci = commit
 cn = clean
-df = diff
 ft = fetch
 gr = grep
 in = init
 lo = log
-pl = pull
 
 # Checkout
 ch = checkout
@@ -140,6 +138,15 @@ cpq = cherry-pick --quit
 # Push
 ps = push
 psf = push -f
+
+## Diff
+df = diff --color
+dfh = df HEAD
+dff = df FETCH_HEAD
+
+## Pull
+pl = pull
+plr = pull --rebase
 
 # Merge
 mr = merge
