@@ -63,3 +63,6 @@ shfmt:
 		home/.exports \
 		home/.bash_profile \
 		home/.aliases
+
+defaults:
+	@'scripts/make-defaults.sh'
