@@ -594,6 +594,32 @@ defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 # Disable local Time Machine backups
 hash tmutil &>/dev/null && sudo tmutil disablelocal
 
+# Set default folder exclusions
+sudo tmutil addexclusion -p "${HOME}/.Trash"
+sudo tmutil addexclusion -p "${HOME}/.VirtualBox"
+sudo tmutil addexclusion -p "${HOME}/.android"
+sudo tmutil addexclusion -p "${HOME}/.dropbox"
+sudo tmutil addexclusion -p "${HOME}/.gem"
+sudo tmutil addexclusion -p "${HOME}/.gradle"
+sudo tmutil addexclusion -p "${HOME}/.npm"
+sudo tmutil addexclusion -p "${HOME}/.virtualenvs"
+sudo tmutil addexclusion -p "${HOME}/Downloads"
+sudo tmutil addexclusion -p "${HOME}/Dropbox"
+sudo tmutil addexclusion -p "${HOME}/Library/Application Support/JetBrains"
+sudo tmutil addexclusion -p "${HOME}/Library/Application Support/Steam/SteamApps"
+sudo tmutil addexclusion -p "${HOME}/Library/Caches"
+sudo tmutil addexclusion -p "${HOME}/Library/Containers/com.docker.docker"
+sudo tmutil addexclusion -p "${HOME}/Library/ScreenRecordings"
+sudo tmutil addexclusion -p "${HOME}/Movies/Wondershare UniConverter/Downloaded"
+sudo tmutil addexclusion -p "${HOME}/go"
+sudo tmutil addexclusion -p "${HOME}/vagrant.d"
+sudo tmutil addexclusion -p '/Applications/Install macOS Big Sur.app'
+sudo tmutil addexclusion -p '/Applications/Install macOS Catalina.app'
+sudo tmutil addexclusion -p '/Applications/Install macOS High Sierra.app'
+sudo tmutil addexclusion -p '/Applications/Install macOS Mojave.app'
+sudo tmutil addexclusion -p '/Applications/Install macOS Monterey.app'
+sudo tmutil addexclusion -p '/private/var/vm/sleepimage'
+
 ###############################################################################
 # Activity Monitor                                                            #
 ###############################################################################
