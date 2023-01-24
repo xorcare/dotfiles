@@ -19,7 +19,11 @@ done 2>/dev/null &
 ###############################################################################
 
 # Disable the sound effects on boot
+#
+# https://tutorybird.ru/mac/kak-otklyuchit-zagruzochnyj-zvuk-ili-startup
+# https://web.archive.org/web/20220603163720/https://prometheus.net.ua/2020/07/14/how-to-get-back-startup-sound-on-mac/
 sudo nvram SystemAudioVolume=" "
+sudo nvram StartupMute=%01
 
 # Disable transparency in the menu bar and elsewhere on Yosemite
 defaults write com.apple.universalaccess reduceTransparency -bool true
