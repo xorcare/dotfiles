@@ -69,3 +69,7 @@ export PATH="${PATH}:/usr/local/opt/libpq/bin"
 # Consider setting your PATH for example like so:
 #   echo 'export PATH="/usr/local/sbin:$PATH"' >> ~/.zshrc
 export PATH="/usr/local/sbin:$PATH"
+
+# Disables the sending of telemetry by golang tools.
+# https://github.com/golang/go/discussions/58409
+export GOTELEMETRY=off
