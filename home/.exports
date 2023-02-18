@@ -73,3 +73,6 @@ export PATH="/usr/local/sbin:$PATH"
 # Disables the sending of telemetry by golang tools.
 # https://github.com/golang/go/discussions/58409
 export GOTELEMETRY=off
+
+# Prevent Homebrew from collecting analytics.
+export HOMEBREW_NO_ANALYTICS=1
