@@ -82,6 +82,7 @@ plugins=(
 )
 
 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
+  # shellcheck disable=SC1090
   source "$ZSH/oh-my-zsh.sh"
 fi
 

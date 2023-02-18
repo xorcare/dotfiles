@@ -11,19 +11,19 @@ on:
 jobs:
   static-analysis:
     name: Static analysis
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-go@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-go@v3
       with:
-        go-version: '1.16.4' # The Go version to download (if necessary) and use.
+        go-version: '1.20.1'
+    - run: go version
     - name: Installing the shfmt tool
-      run: GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt
+      run: go install mvdan.cc/sh/v3/cmd/shfmt@latest
     - name: Installing the shellcheck tool
       run: |
-        scversion="stable"
-        wget -qO- "https://github.com/koalaman/shellcheck/releases/download/${scversion?}/shellcheck-${scversion?}.linux.x86_64.tar.xz" | tar -xJv
-        sudo cp "shellcheck-${scversion}/shellcheck" /usr/bin/
+        sudo apt update
+        sudo apt install shellcheck
         shellcheck --version
     - name: Running checks
       run: make check
