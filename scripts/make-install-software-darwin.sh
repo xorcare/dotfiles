@@ -33,10 +33,6 @@ brew install bash
 brew install bash-completion2
 
 # Install font tools.
-brew tap bramstein/webfonttools
-brew install sfnt2woff \
-  sfnt2woff-zopfli \
-  woff2
 brew tap homebrew/cask-fonts
 brew install --cask \
   font-fira-code \
@@ -49,7 +45,6 @@ brew install tig
 brew install git-lfs
 brew install htop
 brew install wget
-brew install transmission
 brew install shellcheck
 brew install ffmpeg
 
@@ -78,19 +73,6 @@ brew install imagemagick
 # The minimal, blazing-fast, and infinitely customizable prompt for any shell!
 # https://starship.rs
 brew install starship
-
-# Just hold the ⌘-Key a bit longer to get a list of all active short cuts of
-# the current application. It's as simple as that.
-# https://mediaatelier.com/CheatSheet
-brew install --cask cheatsheet
-
-# KeePassXC - Cross-Platform Password Manager
-# Never forget a password again.
-# Securely store passwords using industry standard encryption, quickly
-# auto-type them into desktop applications, and use our browser extension
-# to log into websites.
-# https://keepassxc.org
-brew install --cask keepassxc
 
 # Postgres C API library.
 brew install libpq
