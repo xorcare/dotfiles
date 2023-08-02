@@ -79,6 +79,7 @@ plugins=(
   golang
   heroku
   tig
+  gitfast
 )
 
 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
