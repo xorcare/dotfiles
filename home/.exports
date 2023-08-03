@@ -76,3 +76,6 @@ export GOTELEMETRY=off
 
 # Prevent Homebrew from collecting analytics.
 export HOMEBREW_NO_ANALYTICS=1
+
+# Means an ohmyzsh installer will not replace an existing .zshrc (default: no)
+export KEEP_ZSHRC=yes
