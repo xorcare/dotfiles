@@ -11,6 +11,7 @@ on:
     - 'scripts/make-install-software*.sh'
   schedule:
   - cron: '0 0 1 * *'
+  workflow_dispatch:
 
 jobs:
   check-installer:
