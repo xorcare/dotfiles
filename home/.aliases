@@ -63,3 +63,5 @@ top30() {
 alias fdate='date +"%Y-%m-%dT%H%M%S%z"'
 alias fdateu='date -u +"%Y-%m-%dT%H%M%S%z"'
 alias fdatez='date -u +"%Y-%m-%dT%H%M%SZ"'
+
+alias goba='go build ./...'
