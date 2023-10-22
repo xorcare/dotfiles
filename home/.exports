@@ -85,5 +85,11 @@ export GOTELEMETRY=off
 # Prevent Homebrew from collecting analytics.
 export HOMEBREW_NO_ANALYTICS=1
 
+# Forbid redirects from secure HTTPS to insecure HTTP.
+export HOMEBREW_NO_INSECURE_REDIRECT=1
+
+# Require all casks to have a checksum
+export HOMEBREW_CASK_OPTS="--require-sha"
+
 # Means an ohmyzsh installer will not replace an existing .zshrc (default: no)
 export KEEP_ZSHRC=yes
