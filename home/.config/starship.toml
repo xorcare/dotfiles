@@ -8,14 +8,14 @@ read_only_style = "bold red"
 
 # https://starship.rs/config/#username
 [username]
-show_always = true
+show_always = false
 format = "[$user]($style) at "
 style_user = "bold blue"
 style_root = "bold magenta"
 
 # https://starship.rs/config/#hostname
 [hostname]
-ssh_only = false
+ssh_only = true
 style = "bold yellow"
 
 # https://starship.rs/config/#command-duration
