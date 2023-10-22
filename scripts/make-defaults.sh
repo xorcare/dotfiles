@@ -613,6 +613,9 @@ sudo tmutil addexclusion -p "${HOME}/Library/ScreenRecordings"
 sudo tmutil addexclusion -p "${HOME}/Movies/Wondershare UniConverter/Downloaded"
 sudo tmutil addexclusion -p "${HOME}/go"
 sudo tmutil addexclusion -p "${HOME}/vagrant.d"
+sudo tmutil addexclusion -p '/Applications/Install macOS Sonoma.app'
+sudo tmutil addexclusion -p '/Applications/Install macOS Ventura.app'
+sudo tmutil addexclusion -p '/Applications/Install macOS Monterey.app'
 sudo tmutil addexclusion -p '/Applications/Install macOS Big Sur.app'
 sudo tmutil addexclusion -p '/Applications/Install macOS Catalina.app'
 sudo tmutil addexclusion -p '/Applications/Install macOS High Sierra.app'
