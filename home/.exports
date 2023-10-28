@@ -96,11 +96,9 @@ export KEEP_ZSHRC=yes
 
 export NVM_DIR="$HOME/.nvm"
 
-if [ ! "$(uname -s)" = "Darwin" ]; then
-  # This loads nvm
-  # shellcheck disable=SC1091
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && source "/opt/homebrew/opt/nvm/nvm.sh"
-  # This loads nvm bash_completion
-  # shellcheck disable=SC1091
-  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && source "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-fi
+# This loads nvm
+# shellcheck disable=SC1091
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && source "/opt/homebrew/opt/nvm/nvm.sh"
+# This loads nvm bash_completion
+# shellcheck disable=SC1091
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && source "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
