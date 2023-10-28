@@ -93,3 +93,14 @@ export HOMEBREW_CASK_OPTS="--require-sha"
 
 # Means an ohmyzsh installer will not replace an existing .zshrc (default: no)
 export KEEP_ZSHRC=yes
+
+export NVM_DIR="$HOME/.nvm"
+
+if [ ! "$(uname -s)" = "Darwin" ]; then
+  # This loads nvm
+  # shellcheck disable=SC1091
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && source "/opt/homebrew/opt/nvm/nvm.sh"
+  # This loads nvm bash_completion
+  # shellcheck disable=SC1091
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && source "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+fi
