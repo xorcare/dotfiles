@@ -124,3 +124,12 @@ unset file
 
 # Initialize starship.rs prompt.
 [ -x "$(command -v 'starship')" ] && eval "$(starship init zsh)"
+
+# Configuring brew completions in zsh
+# See https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh
+if type brew &>/dev/null; then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
+fi
