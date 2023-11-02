@@ -74,6 +74,7 @@ export UPDATE_ZSH_DAYS=1
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   brew
+  cp
   git
   git-auto-fetch
   gitfast
