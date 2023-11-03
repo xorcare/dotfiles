@@ -47,6 +47,7 @@ brew install htop
 brew install wget
 brew install shellcheck
 brew install ffmpeg
+brew install sf-pwgen
 
 # Lightweight and flexible command-line JSON processor.
 # NOTE: it's need for working scripts from home/bin.
