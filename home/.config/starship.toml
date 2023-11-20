@@ -21,3 +21,7 @@ style = "bold yellow"
 # https://starship.rs/config/#command-duration
 [cmd_duration]
 show_milliseconds = true
+
+# https://starship.rs/config/#docker-context
+[docker_context]
+disabled = true
