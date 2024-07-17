@@ -110,10 +110,13 @@ br = branch -v
 cl = clone
 ci = commit
 cn = clean
-ft = fetch
 gr = grep
 in = init
 lo = log
+
+# Fetch
+ft = fetch
+fta = fetch --all
 
 # Checkout
 ch = checkout
