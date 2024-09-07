@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e # Enable exit on error.
+
 [[ -z "$DOTFILES_ROOT" ]] && echo "Please set a variable \$DOTFILES_ROOT or use Makefile!" && exit 1
 
 # shellcheck source=func-wait-for-user.sh
@@ -17,6 +19,8 @@ function install() {
   [ -f "$HOME/.ssh/*.pub" ] && chmod 644 "$HOME/.ssh/*.pub"
   [ -f "$HOME/.ssh/authorized_keys" ] && chmod 600 "$HOME/.ssh/authorized_keys"
   [ -f "$HOME/.ssh/known_hosts" ] && chmod 600 "$HOME/.ssh/known_hosts"
+
+  exit 0
 }
 
 if [ "$1" == "--force" ] || [ "$1" == "-f" ]; then
