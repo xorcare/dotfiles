@@ -223,6 +223,11 @@ default = simple
 # git config --global push.autoSetupRemote true
 autoSetupRemote = true
 
+[pull]
+
+# git config --global pull.rebase true
+rebase = true
+
 [submodule]
 
 # git config --global submodule.recurse false
