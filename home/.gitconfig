@@ -53,10 +53,6 @@ untrackedCache = true
 #
 # git config --global rebase.autoStash true
 autoStash = true
-# ?
-#
-# git config --global rebase.autoSquash true
-autoSquash = true
 # If set to true, git rebase will use abbreviated command names in the todo list
 # https://mirrors.edge.kernel.org/pub/software/scm/git/docs/git-config.html
 #
