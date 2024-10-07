@@ -1,117 +1,117 @@
 #!/bin/bash
 
 help() {
-  echo "Usage: hevc [options] <video_files>"
-  echo
-  echo "Convert video files to HEVC format."
-  echo
-  echo "Options:"
-  echo "  --remove-original    Remove the original file after successful conversion."
-  echo "  -h, --help           Display this help message."
-  echo
-  echo "Supported formats: mkv, mp4, webm"
+    echo "Usage: hevc [options] <video_files>"
+    echo
+    echo "Convert video files to HEVC format."
+    echo
+    echo "Options:"
+    echo "  --remove-original    Remove the original file after successful conversion."
+    echo "  -h, --help           Display this help message."
+    echo
+    echo "Supported formats: mkv, mp4, webm"
 }
 
 # Main script
 main() {
-  # Check if the system supports hevc_videotoolbox
-  if ffmpeg -encoders | grep -q hevc_videotoolbox; then
-    use_videotoolbox=true
-  else
-    use_videotoolbox=false
-  fi
-
-  remove_original=false
-  ARGS=""
-
-  # Process command-line arguments
-  while [ $# -gt 0 ]; do
-    case "$1" in
-    -h | --help)
-      help
-      exit 0
-      ;;
-    --remove-original)
-      remove_original=true
-      ;;
-    --* | -*)
-      echo "Illegal option $1"
-      echo "For help use flag -h or --help"
-      exit 1
-      ;;
-    *)
-      ARGS="$ARGS \"$1\""
-      ;;
-    esac
-    shift
-  done
-
-  readonly remove_original ARGS
-
-  eval set -- "$ARGS"
-
-  for file in "$@"; do
-    # Check file extension
-    if [[ ! "$file" =~ \.(mkv|mp4|webm)$ ]]; then
-      echo "Unsupported file format: $file" >&2
-      continue
-    fi
-
-    # Check if the file already has the .hevc. suffix
-    if [[ "$file" == *".hevc."* ]]; then
-      echo "File $file already has .hevc. suffix. Skipping." >&2
-      continue
-    fi
-
-    # Create output file name
-    base_name="${file%.*}"
-    hevc_file="${base_name}.hevc.${file##*.}"
-
-    # Check if the HEVC file already exists
-    if [[ -f "$hevc_file" ]]; then
-      echo "File $hevc_file already exists. Skipping." >&2
-      continue
-    fi
-
-    # Check codec of the input file
-    codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$file")
-
-    if [[ "$codec" == "hevc" ]]; then
-      echo "File $file is already in HEVC codec. Skipping." >&2
-      continue
-    fi
-
-    # Define the progress file name with .hevc suffix
-    progress_file="${base_name}.progress.hevc.${file##*.}"
-
-    # Remove the progress file if it already exists
-    rm -f "$progress_file"
-
-    # Determine the conversion command based on codec support
-    if $use_videotoolbox; then
-      # Use hevc_videotoolbox for conversion if supported
-      ffmpeg -i "$file" -c:v hevc_videotoolbox -b:v 9400k -c:a copy "$progress_file"
+    # Check if the system supports hevc_videotoolbox
+    if ffmpeg -encoders | grep -q hevc_videotoolbox; then
+        use_videotoolbox=true
     else
-      # Fallback to libx265 if videotoolbox is not supported
-      ffmpeg -i "$file" -c:v libx265 -b:v 9400k -maxrate:v 9400k -minrate:v 0 -c:a copy "$progress_file"
+        use_videotoolbox=false
     fi
 
-    # Check if conversion was successful
-    # shellcheck disable=SC2181
-    if [[ $? -eq 0 ]]; then
-      mv "$progress_file" "$hevc_file"
-      echo "File $file successfully converted to $hevc_file."
+    remove_original=false
+    ARGS=""
 
-      # Remove the original file if the flag is set
-      if $remove_original; then
-        rm -f "$file"
-        echo "Original file $file has been removed."
-      fi
-    else
-      echo "Error occurred while converting $file." >&2
-      rm -f "$progress_file" # Remove temporary file in case of error
-    fi
-  done
+    # Process command-line arguments
+    while [ $# -gt 0 ]; do
+        case "$1" in
+        -h | --help)
+            help
+            exit 0
+            ;;
+        --remove-original)
+            remove_original=true
+            ;;
+        --* | -*)
+            echo "Illegal option $1"
+            echo "For help use flag -h or --help"
+            exit 1
+            ;;
+        *)
+            ARGS="$ARGS \"$1\""
+            ;;
+        esac
+        shift
+    done
+
+    readonly remove_original ARGS
+
+    eval set -- "$ARGS"
+
+    for file in "$@"; do
+        # Check file extension
+        if [[ ! "$file" =~ \.(mkv|mp4|webm)$ ]]; then
+            echo "Unsupported file format: $file" >&2
+            continue
+        fi
+
+        # Check if the file already has the .hevc. suffix
+        if [[ "$file" == *".hevc."* ]]; then
+            echo "File $file already has .hevc. suffix. Skipping." >&2
+            continue
+        fi
+
+        # Create output file name
+        base_name="${file%.*}"
+        hevc_file="${base_name}.hevc.${file##*.}"
+
+        # Check if the HEVC file already exists
+        if [[ -f "$hevc_file" ]]; then
+            echo "File $hevc_file already exists. Skipping." >&2
+            continue
+        fi
+
+        # Check codec of the input file
+        codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$file")
+
+        if [[ "$codec" == "hevc" ]]; then
+            echo "File $file is already in HEVC codec. Skipping." >&2
+            continue
+        fi
+
+        # Define the progress file name with .hevc suffix
+        progress_file="${base_name}.progress.hevc.${file##*.}"
+
+        # Remove the progress file if it already exists
+        rm -f "$progress_file"
+
+        # Determine the conversion command based on codec support
+        if $use_videotoolbox; then
+            # Use hevc_videotoolbox for conversion if supported
+            ffmpeg -i "$file" -c:v hevc_videotoolbox -b:v 9400k -c:a copy "$progress_file"
+        else
+            # Fallback to libx265 if videotoolbox is not supported
+            ffmpeg -i "$file" -c:v libx265 -b:v 9400k -maxrate:v 9400k -minrate:v 0 -c:a copy "$progress_file"
+        fi
+
+        # Check if conversion was successful
+        # shellcheck disable=SC2181
+        if [[ $? -eq 0 ]]; then
+            mv "$progress_file" "$hevc_file"
+            echo "File $file successfully converted to $hevc_file."
+
+            # Remove the original file if the flag is set
+            if $remove_original; then
+                rm -f "$file"
+                echo "Original file $file has been removed."
+            fi
+        else
+            echo "Error occurred while converting $file." >&2
+            rm -f "$progress_file" # Remove temporary file in case of error
+        fi
+    done
 }
 
 # Execute the main function

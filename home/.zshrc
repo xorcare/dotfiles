@@ -73,19 +73,19 @@ export UPDATE_ZSH_DAYS=1
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  brew
-  cp
-  git
-  git-auto-fetch
-  gitfast
-  golang
-  heroku
-  tig
+    brew
+    cp
+    git
+    git-auto-fetch
+    gitfast
+    golang
+    heroku
+    tig
 )
 
 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
-  # shellcheck disable=SC1090
-  source "$ZSH/oh-my-zsh.sh"
+    # shellcheck disable=SC1090
+    source "$ZSH/oh-my-zsh.sh"
 fi
 
 # User configuration
@@ -117,8 +117,8 @@ fi
 # Load the shell dotfiles, and then some:
 # * ~/.extra can be used for other settings you don’t want to commit.
 for file in ~/.{prompt,zsh_aliases,exports,extra,chmod}; do
-  # shellcheck disable=SC1090
-  [ -r "$file" ] && [ -f "$file" ] && source "$file"
+    # shellcheck disable=SC1090
+    [ -r "$file" ] && [ -f "$file" ] && source "$file"
 done
 unset file
 
@@ -128,8 +128,8 @@ unset file
 # Configuring brew completions in zsh
 # See https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh
 if type brew &>/dev/null; then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 
-  autoload -Uz compinit
-  compinit
+    autoload -Uz compinit
+    compinit
 fi

@@ -40,8 +40,8 @@ GPG_TTY="$(tty)"
 export GPG_TTY
 
 if [[ -x "$(command -v 'gpgconf')" ]]; then
-  SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
-  export SSH_AUTH_SOCK
+    SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+    export SSH_AUTH_SOCK
 fi
 
 # Formatting file timestamps

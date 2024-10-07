@@ -35,9 +35,9 @@ brew install bash-completion2
 # Install font tools.
 brew tap homebrew/cask-fonts
 brew install --cask \
-  font-fira-code \
-  font-fira-mono \
-  font-fira-sans
+    font-fira-code \
+    font-fira-mono \
+    font-fira-sans
 
 # Install other useful binaries.
 brew install git
