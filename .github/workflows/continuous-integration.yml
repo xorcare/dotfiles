@@ -1,39 +1,39 @@
+---
 name: Continuous Integration
 
 on:
   push:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
-
 jobs:
   static-analysis:
     name: Static analysis
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
-      with:
-        go-version: '1.23.1'
-    - run: go version
-    - name: Installing the shfmt tool
-      run: go install mvdan.cc/sh/v3/cmd/shfmt@latest
-    - name: Installing the shellcheck tool
-      run: |
-        sudo apt update
-        sudo apt install shellcheck
-        shellcheck --version
-    - name: Running checks
-      run: make check
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.1
+      - run: go version
+      - name: Installing the shfmt tool
+        run: go install mvdan.cc/sh/v3/cmd/shfmt@latest
+      - name: Installing the shellcheck tool
+        run: |
+          sudo apt update
+          sudo apt install shellcheck
+          shellcheck --version
+      - name: Running checks
+        run: make check
   check-installer:
     name: Checking the installation
     strategy:
       matrix:
         os:
-        - 'ubuntu-24.04'
-        - 'macos-latest'
+          - ubuntu-24.04
+          - macos-latest
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
-    - name: Checking the installation of dotfiles on ${{ matrix.os }}
-      run: make install
+      - uses: actions/checkout@v4
+      - name: Checking the installation of dotfiles on ${{ matrix.os }}
+        run: make install
