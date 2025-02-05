@@ -21,62 +21,62 @@ get_bitrate() {
     local framerate=$3
 
     case "$width" in
-        7680)  # 8K
-            if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-                echo "240M"
-            else
-                echo "160M"
-            fi
-            ;;
-        3840)  # 4K
-            if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-                echo "68M"
-            else
-                echo "45M"
-            fi
-            ;;
-        2560)  # 2K
-            if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-                echo "24M"
-            else
-                echo "16M"
-            fi
-            ;;
-        1920)  # 1080p
-            if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-                echo "12M"
-            else
-                echo "8M"
-            fi
-            ;;
-        1280)  # 720p
-            if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-                echo "7.5M"
-            else
-                echo "5M"
-            fi
-            ;;
-        854)   # 480p
-            if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-                echo "4M"
-            else
-                echo "2.5M"
-            fi
-            ;;
-        *)     # default
-            echo "9.4M"
-            ;;
+    7680) # 8K
+        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
+            echo "240M"
+        else
+            echo "160M"
+        fi
+        ;;
+    3840) # 4K
+        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
+            echo "68M"
+        else
+            echo "45M"
+        fi
+        ;;
+    2560) # 2K
+        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
+            echo "24M"
+        else
+            echo "16M"
+        fi
+        ;;
+    1920) # 1080p
+        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
+            echo "12M"
+        else
+            echo "8M"
+        fi
+        ;;
+    1280) # 720p
+        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
+            echo "7.5M"
+        else
+            echo "5M"
+        fi
+        ;;
+    854) # 480p
+        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
+            echo "4M"
+        else
+            echo "2.5M"
+        fi
+        ;;
+    *) # default
+        echo "9.4M"
+        ;;
     esac
 }
 
 # Main script
 main() {
-    if ! command -v ffmpeg &> /dev/null; then
+    if ! command -v ffmpeg &>/dev/null; then
         echo "ffmpeg is required but it's not installed. Aborting."
         exit 1
     fi
 
-    if ! command -v ffprobe &> /dev/null; then
+    if ! command -v ffprobe &>/dev/null; then
         echo "ffprobe is required but it's not installed. Aborting."
         exit 1
     fi
@@ -144,12 +144,12 @@ main() {
         fi
 
         resolution=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height,avg_frame_rate -of csv=s=x:p=0 "$file")
-        width=$(echo $resolution | cut -d'x' -f1)
-        height=$(echo $resolution | cut -d'x' -f2)
+        width=$(echo "$resolution" | cut -d'x' -f1)
+        height=$(echo "$resolution" | cut -d'x' -f2)
 
         framerate=$(ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of csv=p=0 "$file")
 
-        bitrate=$(get_bitrate $width $height $framerate)
+        bitrate=$(get_bitrate "$width" "$height" "$framerate")
 
         codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$file")
 
@@ -162,11 +162,12 @@ main() {
         rm -f "$progress_file"
 
         if $use_videotoolbox; then
-            ffmpeg -y -i "$file" -c:v hevc_videotoolbox -b:v $bitrate -maxrate:v $bitrate -c:a copy "$progress_file"
+            ffmpeg -y -i "$file" -c:v hevc_videotoolbox -b:v "$bitrate" -maxrate:v "$bitrate" -c:a copy "$progress_file"
         else
-            ffmpeg -y -i "$file" -c:v libx265 -b:v $bitrate -maxrate:v $bitrate -c:a copy "$progress_file"
+            ffmpeg -y -i "$file" -c:v libx265 -b:v "$bitrate" -maxrate:v "$bitrate" -c:a copy "$progress_file"
         fi
 
+        # shellcheck disable=SC2181
         if [[ $? -eq 0 ]]; then
             mv "$progress_file" "$hevc_file"
 
@@ -177,20 +178,20 @@ main() {
 
                 continue
 
-             else
+            else
                 echo "File $file successfully converted to $hevc_file."
 
                 if $remove_original; then
                     rm -f "$file"
                     echo "Original file $file has been removed."
                 fi
-             fi
+            fi
 
-         else
-             echo "Error occurred while converting $file." >&2
-             rm -f "$progress_file"
-         fi
-     done
+        else
+            echo "Error occurred while converting $file." >&2
+            rm -f "$progress_file"
+        fi
+    done
 }
 
 main "$@"
