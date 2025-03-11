@@ -242,6 +242,9 @@ pushInsteadOf = https://github.com/
 [url "git@bitbucket.org:"]
 pushInsteadOf = https://bitbucket.org/
 
+[log]
+date = iso
+
 [include] ; https://git-scm.com/docs/git-config#_includes
 # `~/.gitconfig.local` it will store the global settings, but unlike
 # `~/.gitconfig` only those that are connected to a specific computer so-as
