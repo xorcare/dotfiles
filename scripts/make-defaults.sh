@@ -605,7 +605,7 @@ sudo tmutil addexclusion -p "${HOME}/.gradle"
 sudo tmutil addexclusion -p "${HOME}/.npm"
 sudo tmutil addexclusion -p "${HOME}/.virtualenvs"
 sudo tmutil addexclusion -p "${HOME}/Downloads"
-sudo tmutil addexclusion -p "${HOME}/Documents/Torrents"
+sudo tmutil addexclusion -p "${HOME}/Downloads/Torrents"
 sudo tmutil addexclusion -p "${HOME}/Dropbox"
 sudo tmutil addexclusion -p "${HOME}/Library/Application Support/JetBrains"
 sudo tmutil addexclusion -p "${HOME}/Library/Application Support/Steam/SteamApps"
@@ -743,9 +743,9 @@ defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool t
 # Transmission.app                                                            #
 ###############################################################################
 
-# Use `~/Documents/Torrents` to store incomplete downloads
+# Use `~/Downloads/Torrents` to store incomplete downloads
 defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool true
-defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Documents/Torrents"
+defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Downloads/Torrents"
 
 # Use `~/Downloads` to store completed downloads
 defaults write org.m0k.transmission DownloadLocationConstant -bool true
