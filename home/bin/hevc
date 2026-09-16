@@ -5,83 +5,110 @@ set -e
 help() {
     echo "Usage: hevc [options] <video_files>"
     echo
-    echo "Convert video files to HEVC format."
+    echo "Convert video files to HEVC format without inflating the output size."
     echo
     echo "Options:"
-    echo "  --remove-original      Remove the original file after successful conversion."
+    echo "  --remove-original       Remove the original file after successful conversion."
     echo "  --overwrite-original    Overwrite the original file with the converted file."
-    echo "  -h, --help             Display this help message."
+    echo "  --ratio <percent>       Percent of the source video bitrate to target (default: 95)."
+    echo "  --force                 Convert even if the source is already HEVC."
+    echo "  -h, --help              Display this help message."
     echo
     echo "Supported formats: mkv, mp4, webm"
 }
 
-get_bitrate() {
+# Resolution/framerate ceiling. Acts only as an UPPER bound: the real target is
+# never higher than the source video bitrate.
+get_bitrate_cap() {
     local width=$1
-    local height=$2
-    local framerate=$3
+    local fps=$2
+    local high=false
+
+    # fps comes as an integer here; treat >= 48 as high framerate.
+    if [[ "$fps" -ge 48 ]]; then
+        high=true
+    fi
 
     case "$width" in
-    7680) # 8K
-        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-            echo "240M"
-        else
-            echo "160M"
-        fi
-        ;;
-    3840) # 4K
-        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-            echo "68M"
-        else
-            echo "45M"
-        fi
-        ;;
-    2560) # 2K
-        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-            echo "24M"
-        else
-            echo "16M"
-        fi
-        ;;
-    1920) # 1080p
-        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-            echo "12M"
-        else
-            echo "8M"
-        fi
-        ;;
-    1280) # 720p
-        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-            echo "7.5M"
-        else
-            echo "5M"
-        fi
-        ;;
-    854) # 480p
-        if [[ "$framerate" =~ ^(48|50|60)$ ]]; then
-            echo "4M"
-        else
-            echo "2.5M"
-        fi
-        ;;
-    *) # default
-        echo "9.4M"
-        ;;
+    7680) $high && echo 240000000 || echo 160000000 ;;
+    3840) $high && echo 68000000 || echo 45000000 ;;
+    2560) $high && echo 24000000 || echo 16000000 ;;
+    1920) $high && echo 12000000 || echo 8000000 ;;
+    1280) $high && echo 7500000 || echo 5000000 ;;
+    854) $high && echo 4000000 || echo 2500000 ;;
+    *) $high && echo 12000000 || echo 9400000 ;;
     esac
 }
 
-# Main script
+# Integer framerate from ffprobe fractions like "60000/1001" or "30/1".
+get_fps() {
+    local raw num den
+    raw=$(ffprobe -v error -select_streams v:0 \
+        -show_entries stream=avg_frame_rate \
+        -of default=noprint_wrappers=1:nokey=1 "$1" | head -n1)
+
+    num="${raw%%/*}"
+    den="${raw##*/}"
+
+    if [[ -z "$num" || "$num" == "0" || -z "$den" || "$den" == "0" ]]; then
+        echo 30
+        return
+    fi
+
+    # Rounded division, so 60000/1001 -> 60.
+    echo $(((num + den / 2) / den))
+}
+
+# Real average bitrate of the VIDEO stream in bit/s.
+# Tries stream metadata, then the container total minus audio, then packet sizes.
+get_source_video_bitrate() {
+    local file="$1"
+    local br dur size
+
+    br=$(ffprobe -v error -select_streams v:0 \
+        -show_entries stream=bit_rate \
+        -of default=noprint_wrappers=1:nokey=1 "$file" | head -n1)
+
+    if [[ "$br" =~ ^[0-9]+$ ]] && [[ "$br" -gt 0 ]]; then
+        echo "$br"
+        return
+    fi
+
+    # MKV/WebM usually lack per-stream bit_rate: sum the video packet sizes.
+    dur=$(ffprobe -v error -show_entries format=duration \
+        -of default=noprint_wrappers=1:nokey=1 "$file" | head -n1)
+
+    if [[ "$dur" =~ ^[0-9]+(\.[0-9]+)?$ ]] && (($(echo "$dur > 0" | bc -l))); then
+        size=$(ffprobe -v error -select_streams v:0 -show_entries packet=size \
+            -of default=noprint_wrappers=1:nokey=1 "$file" |
+            awk '{s+=$1} END {printf "%.0f", s}')
+
+        if [[ "$size" =~ ^[0-9]+$ ]] && [[ "$size" -gt 0 ]]; then
+            awk -v s="$size" -v d="$dur" 'BEGIN {printf "%.0f", s*8/d}'
+            return
+        fi
+    fi
+
+    echo 0
+}
+
+human_kbit() {
+    echo "$(($1 / 1000)) kbit/s"
+}
+
 main() {
     if ! command -v ffmpeg &>/dev/null; then
-        echo "ffmpeg is required but it's not installed. Aborting."
+        echo "ffmpeg is required but it's not installed. Aborting." >&2
         exit 1
     fi
 
     if ! command -v ffprobe &>/dev/null; then
-        echo "ffprobe is required but it's not installed. Aborting."
+        echo "ffprobe is required but it's not installed. Aborting." >&2
         exit 1
     fi
 
-    if ffmpeg -encoders 2>/dev/null | grep -q hevc_videotoolbox; then
+    # Use the Apple Silicon hardware encoder when it is actually available.
+    if ffmpeg -hide_banner -encoders 2>/dev/null | grep -q hevc_videotoolbox; then
         use_videotoolbox=true
     else
         use_videotoolbox=false
@@ -89,7 +116,9 @@ main() {
 
     remove_original=false
     overwrite_original=false
-    ARGS=""
+    force=false
+    ratio=95
+    files=()
 
     while [ $# -gt 0 ]; do
         case "$1" in
@@ -103,28 +132,48 @@ main() {
         --overwrite-original)
             overwrite_original=true
             ;;
+        --force)
+            force=true
+            ;;
+        --ratio)
+            shift
+            ratio="$1"
+            ;;
         --* | -*)
-            echo "Illegal option $1"
-            echo "For help use flag -h or --help"
+            echo "Illegal option $1" >&2
+            echo "For help use flag -h or --help" >&2
             exit 1
             ;;
         *)
-            ARGS="$ARGS \"$1\""
+            files+=("$1")
             ;;
         esac
         shift
     done
+
+    if ! [[ "$ratio" =~ ^[0-9]+$ ]] || [[ "$ratio" -lt 10 ]] || [[ "$ratio" -gt 100 ]]; then
+        echo "Error: --ratio must be an integer between 10 and 100." >&2
+        exit 1
+    fi
 
     if $remove_original && $overwrite_original; then
         echo "Error: You cannot use --remove-original and --overwrite-original at the same time." >&2
         exit 1
     fi
 
-    readonly remove_original ARGS overwrite_original
+    if [[ ${#files[@]} -eq 0 ]]; then
+        help
+        exit 1
+    fi
 
-    eval set -- "$ARGS"
+    readonly remove_original overwrite_original force ratio use_videotoolbox
 
-    for file in "$@"; do
+    for file in "${files[@]}"; do
+        if [[ ! -f "$file" ]]; then
+            echo "File not found: $file" >&2
+            continue
+        fi
+
         if [[ ! "$file" =~ \.(mkv|mp4|webm)$ ]]; then
             echo "Unsupported file format: $file" >&2
             continue
@@ -136,57 +185,94 @@ main() {
         fi
 
         base_name="${file%.*}"
-        hevc_file="${base_name}.hevc.${file##*.}"
+        extension="${file##*.}"
+        hevc_file="${base_name}.hevc.${extension}"
 
         if [[ -f "$hevc_file" && "$overwrite_original" != true ]]; then
             echo "File $hevc_file already exists. Skipping." >&2
             continue
         fi
 
-        resolution=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height,avg_frame_rate -of csv=s=x:p=0 "$file")
-        width=$(echo "$resolution" | cut -d'x' -f1)
-        height=$(echo "$resolution" | cut -d'x' -f2)
+        codec=$(ffprobe -v error -select_streams v:0 \
+            -show_entries stream=codec_name \
+            -of default=noprint_wrappers=1:nokey=1 "$file" | head -n1)
 
-        framerate=$(ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of csv=p=0 "$file")
-
-        bitrate=$(get_bitrate "$width" "$height" "$framerate")
-
-        codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$file")
-
-        if [[ "$codec" == "hevc" ]]; then
+        if [[ "$codec" == "hevc" ]] && ! $force; then
             echo "File $file is already in HEVC codec. Skipping." >&2
             continue
         fi
 
-        progress_file="${base_name}.progress.hevc.${file##*.}"
+        width=$(ffprobe -v error -select_streams v:0 \
+            -show_entries stream=width \
+            -of default=noprint_wrappers=1:nokey=1 "$file" | head -n1)
+
+        fps=$(get_fps "$file")
+        cap=$(get_bitrate_cap "$width" "$fps")
+        source_bitrate=$(get_source_video_bitrate "$file")
+
+        if [[ "$source_bitrate" -gt 0 ]]; then
+            # Never spend more bits than the source did: this is what stops
+            # a 40 MB AV1 file from becoming a 400 MB HEVC file.
+            target=$((source_bitrate * ratio / 100))
+
+            if [[ "$target" -gt "$cap" ]]; then
+                target="$cap"
+            fi
+        else
+            echo "Warning: cannot detect source video bitrate for $file, using resolution cap." >&2
+            target="$cap"
+        fi
+
+        maxrate=$((target * 130 / 100))
+        bufsize=$((maxrate * 2))
+
+        echo "-> $file"
+        echo "   codec=$codec width=$width fps=$fps"
+        echo "   source video: $(human_kbit "$source_bitrate")"
+        echo "   target HEVC:  $(human_kbit "$target") (cap $(human_kbit "$cap"), ratio ${ratio}%)"
+
+        progress_file="${base_name}.progress.hevc.${extension}"
         rm -f "$progress_file"
 
         if $use_videotoolbox; then
-            ffmpeg -y -i "$file" -c:v hevc_videotoolbox -b:v "$bitrate" -maxrate:v "$bitrate" -c:a copy "$progress_file"
+            video_args=(-c:v hevc_videotoolbox -tag:v hvc1)
         else
-            ffmpeg -y -i "$file" -c:v libx265 -b:v "$bitrate" -maxrate:v "$bitrate" -c:a copy "$progress_file"
+            video_args=(-c:v libx265 -preset medium -tag:v hvc1)
         fi
 
-        # shellcheck disable=SC2181
-        if [[ $? -eq 0 ]]; then
-            mv "$progress_file" "$hevc_file"
+        if ffmpeg -hide_banner -y -i "$file" \
+            -map 0 \
+            "${video_args[@]}" \
+            -b:v "$target" \
+            -maxrate:v "$maxrate" \
+            -bufsize:v "$bufsize" \
+            -c:a copy \
+            -c:s copy \
+            -map_metadata 0 \
+            "$progress_file"; then
 
-            if $overwrite_original; then
-                mv "$hevc_file" "$file"
-                echo "Original file $file has been overwritten with the converted file."
-                hevc_file="$file"
+            # Safety net: if HEVC still ended up bigger, keep the original.
+            original_size=$(wc -c <"$file")
+            new_size=$(wc -c <"$progress_file")
 
+            if [[ "$new_size" -ge "$original_size" ]]; then
+                echo "Result is not smaller ($new_size >= $original_size bytes). Keeping original, discarding output." >&2
+                rm -f "$progress_file"
                 continue
-
-            else
-                echo "File $file successfully converted to $hevc_file."
-
-                if $remove_original; then
-                    rm -f "$file"
-                    echo "Original file $file has been removed."
-                fi
             fi
 
+            mv "$progress_file" "$hevc_file"
+            echo "File $file successfully converted to $hevc_file."
+            awk -v a="$original_size" -v b="$new_size" \
+                'BEGIN {printf "   %.1f MiB -> %.1f MiB (%.0f%% of original)\n", a/1048576, b/1048576, b*100/a}'
+
+            if $overwrite_original; then
+                mv -f "$hevc_file" "$file"
+                echo "Original file $file has been overwritten with the converted file."
+            elif $remove_original; then
+                rm -f "$file"
+                echo "Original file $file has been removed."
+            fi
         else
             echo "Error occurred while converting $file." >&2
             rm -f "$progress_file"
