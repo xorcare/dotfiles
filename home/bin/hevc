@@ -2,51 +2,56 @@
 
 set -e
 
+readonly DEFAULT_VT_QUALITY=70
+readonly DEFAULT_CRF=20
+readonly MAX_ATTEMPTS=3
+
+# Size budget as a percent of the SOURCE FILE size, by source codec efficiency.
+readonly BUDGET_MODERN=150 # av1, vvc: more efficient than HEVC
+readonly BUDGET_PEER=130   # vp9, hevc: comparable to HEVC
+readonly BUDGET_LEGACY=100 # h264, vp8, mpeg*: less efficient than HEVC
+
 help() {
     echo "Usage: hevc [options] <video_files>"
     echo
-    echo "Convert video files to HEVC format without inflating the output size."
+    echo "Convert video files to HEVC with quality-driven rate control inside a"
+    echo "hard size budget, so motion stays sharp and files never balloon."
+    echo
+    echo "Size budget (percent of the source file, chosen by source codec):"
+    echo "  av1, vvc                 ${BUDGET_MODERN}%  (more efficient than HEVC)"
+    echo "  vp9, hevc                ${BUDGET_PEER}%  (comparable to HEVC)"
+    echo "  h264, vp8, mpeg4, ...    ${BUDGET_LEGACY}%  (less efficient than HEVC)"
     echo
     echo "Options:"
+    echo "  --budget <percent>      Override the budget for every input."
+    echo "  --encoder <name>        auto | videotoolbox | x265 (default: auto)."
+    echo "                         x265 is slower but noticeably better per bit."
+    echo "  --quality <1-100>       VideoToolbox quality, higher is better."
+    echo "                         Default: $DEFAULT_VT_QUALITY. Practical range 55-80."
+    echo "  --crf <0-51>            libx265 CRF, lower is better."
+    echo "                         Default: $DEFAULT_CRF. Practical range 18-24."
     echo "  --remove-original       Remove the original file after successful conversion."
     echo "  --overwrite-original    Overwrite the original file with the converted file."
-    echo "  --ratio <percent>       Percent of the source video bitrate to target (default: 95)."
     echo "  --force                 Convert even if the source is already HEVC."
     echo "  -h, --help              Display this help message."
     echo
     echo "Supported formats: mkv, mp4, webm"
+    echo
+    echo "How the budget is met: quality mode drives the bitrate, a bitrate ceiling"
+    echo "derived from the budget only intervenes in the heaviest scenes, and if the"
+    echo "result still overshoots, the file is re-encoded at a lower quality step."
 }
 
-# Resolution/framerate ceiling. Acts only as an UPPER bound: the real target is
-# never higher than the source video bitrate.
-get_bitrate_cap() {
-    local width=$1
-    local fps=$2
-    local high=false
-
-    # fps comes as an integer here; treat >= 48 as high framerate.
-    if [[ "$fps" -ge 48 ]]; then
-        high=true
-    fi
-
-    case "$width" in
-    7680) $high && echo 240000000 || echo 160000000 ;;
-    3840) $high && echo 68000000 || echo 45000000 ;;
-    2560) $high && echo 24000000 || echo 16000000 ;;
-    1920) $high && echo 12000000 || echo 8000000 ;;
-    1280) $high && echo 7500000 || echo 5000000 ;;
-    854) $high && echo 4000000 || echo 2500000 ;;
-    *) $high && echo 12000000 || echo 9400000 ;;
-    esac
+probe() {
+    ffprobe -v error -select_streams v:0 \
+        -show_entries "stream=$1" \
+        -of default=noprint_wrappers=1:nokey=1 "$2" | head -n1
 }
 
 # Integer framerate from ffprobe fractions like "60000/1001" or "30/1".
 get_fps() {
     local raw num den
-    raw=$(ffprobe -v error -select_streams v:0 \
-        -show_entries stream=avg_frame_rate \
-        -of default=noprint_wrappers=1:nokey=1 "$1" | head -n1)
-
+    raw=$(probe avg_frame_rate "$1")
     num="${raw%%/*}"
     den="${raw##*/}"
 
@@ -55,69 +60,80 @@ get_fps() {
         return
     fi
 
-    # Rounded division, so 60000/1001 -> 60.
     echo $(((num + den / 2) / den))
 }
 
-# Real average bitrate of the VIDEO stream in bit/s.
-# Tries stream metadata, then the container total minus audio, then packet sizes.
-get_source_video_bitrate() {
-    local file="$1"
-    local br dur size
+get_duration() {
+    ffprobe -v error -show_entries format=duration \
+        -of default=noprint_wrappers=1:nokey=1 "$1" | head -n1
+}
 
-    br=$(ffprobe -v error -select_streams v:0 \
-        -show_entries stream=bit_rate \
-        -of default=noprint_wrappers=1:nokey=1 "$file" | head -n1)
+# Total bytes of the video stream, used to separate video from copied audio.
+get_video_bytes() {
+    ffprobe -v error -select_streams v:0 -show_entries packet=size \
+        -of default=noprint_wrappers=1:nokey=1 "$1" |
+        awk '{s+=$1} END {printf "%.0f", s+0}'
+}
 
-    if [[ "$br" =~ ^[0-9]+$ ]] && [[ "$br" -gt 0 ]]; then
-        echo "$br"
-        return
-    fi
-
-    # MKV/WebM usually lack per-stream bit_rate: sum the video packet sizes.
-    dur=$(ffprobe -v error -show_entries format=duration \
-        -of default=noprint_wrappers=1:nokey=1 "$file" | head -n1)
-
-    if [[ "$dur" =~ ^[0-9]+(\.[0-9]+)?$ ]] && (($(echo "$dur > 0" | bc -l))); then
-        size=$(ffprobe -v error -select_streams v:0 -show_entries packet=size \
-            -of default=noprint_wrappers=1:nokey=1 "$file" |
-            awk '{s+=$1} END {printf "%.0f", s}')
-
-        if [[ "$size" =~ ^[0-9]+$ ]] && [[ "$size" -gt 0 ]]; then
-            awk -v s="$size" -v d="$dur" 'BEGIN {printf "%.0f", s*8/d}'
-            return
-        fi
-    fi
-
-    echo 0
+# Budget percent implied by the source codec efficiency.
+get_budget_for_codec() {
+    case "$1" in
+    av1 | vvc | h266) echo "$BUDGET_MODERN" ;;
+    vp9 | hevc | h265) echo "$BUDGET_PEER" ;;
+    *) echo "$BUDGET_LEGACY" ;;
+    esac
 }
 
 human_kbit() {
-    echo "$(($1 / 1000)) kbit/s"
+    if [[ "$1" -gt 0 ]]; then
+        echo "$(($1 / 1000)) kbit/s"
+    else
+        echo "unknown"
+    fi
+}
+
+human_mib() {
+    awk -v b="$1" 'BEGIN {printf "%.1f MiB", b/1048576}'
+}
+
+# Lower the quality setting proportionally to how much the attempt overshot.
+# x265: +6 CRF roughly halves the bitrate. VideoToolbox reacts more sharply.
+next_quality_step() {
+    local kind="$1" current="$2" actual="$3" budget="$4"
+
+    awk -v kind="$kind" -v cur="$current" -v a="$actual" -v b="$budget" 'BEGIN {
+        r = a / b
+        if (r < 1.01) r = 1.01
+        if (kind == "crf") {
+            d = int(6 * log(r) / log(2) + 0.5)
+            if (d < 1) d = 1
+            v = cur + d
+            if (v > 30) v = 30
+        } else {
+            d = int(10 * log(r) / log(2) + 0.5)
+            if (d < 4) d = 4
+            v = cur - d
+            if (v < 35) v = 35
+        }
+        print v
+    }'
 }
 
 main() {
-    if ! command -v ffmpeg &>/dev/null; then
-        echo "ffmpeg is required but it's not installed. Aborting." >&2
-        exit 1
-    fi
+    for tool in ffmpeg ffprobe awk; do
+        if ! command -v "$tool" &>/dev/null; then
+            echo "$tool is required but it's not installed. Aborting." >&2
+            exit 1
+        fi
+    done
 
-    if ! command -v ffprobe &>/dev/null; then
-        echo "ffprobe is required but it's not installed. Aborting." >&2
-        exit 1
-    fi
-
-    # Use the Apple Silicon hardware encoder when it is actually available.
-    if ffmpeg -hide_banner -encoders 2>/dev/null | grep -q hevc_videotoolbox; then
-        use_videotoolbox=true
-    else
-        use_videotoolbox=false
-    fi
-
+    encoder=auto
+    vt_quality="$DEFAULT_VT_QUALITY"
+    crf="$DEFAULT_CRF"
+    budget_override=0
     remove_original=false
     overwrite_original=false
     force=false
-    ratio=95
     files=()
 
     while [ $# -gt 0 ]; do
@@ -125,6 +141,22 @@ main() {
         -h | --help)
             help
             exit 0
+            ;;
+        --encoder)
+            shift
+            encoder="${1:-}"
+            ;;
+        --quality)
+            shift
+            vt_quality="${1:-}"
+            ;;
+        --crf)
+            shift
+            crf="${1:-}"
+            ;;
+        --budget)
+            shift
+            budget_override="${1:-}"
             ;;
         --remove-original)
             remove_original=true
@@ -134,10 +166,6 @@ main() {
             ;;
         --force)
             force=true
-            ;;
-        --ratio)
-            shift
-            ratio="$1"
             ;;
         --* | -*)
             echo "Illegal option $1" >&2
@@ -151,8 +179,26 @@ main() {
         shift
     done
 
-    if ! [[ "$ratio" =~ ^[0-9]+$ ]] || [[ "$ratio" -lt 10 ]] || [[ "$ratio" -gt 100 ]]; then
-        echo "Error: --ratio must be an integer between 10 and 100." >&2
+    case "$encoder" in
+    auto | videotoolbox | x265) ;;
+    *)
+        echo "Error: --encoder must be auto, videotoolbox or x265." >&2
+        exit 1
+        ;;
+    esac
+
+    if ! [[ "$vt_quality" =~ ^[0-9]+$ ]] || [[ "$vt_quality" -lt 1 ]] || [[ "$vt_quality" -gt 100 ]]; then
+        echo "Error: --quality must be an integer between 1 and 100." >&2
+        exit 1
+    fi
+
+    if ! [[ "$crf" =~ ^[0-9]+$ ]] || [[ "$crf" -gt 51 ]]; then
+        echo "Error: --crf must be an integer between 0 and 51." >&2
+        exit 1
+    fi
+
+    if ! [[ "$budget_override" =~ ^[0-9]+$ ]] || { [[ "$budget_override" -ne 0 ]] && [[ "$budget_override" -lt 20 ]]; }; then
+        echo "Error: --budget must be a percent of at least 20." >&2
         exit 1
     fi
 
@@ -166,7 +212,27 @@ main() {
         exit 1
     fi
 
-    readonly remove_original overwrite_original force ratio use_videotoolbox
+    encoders_list=$(ffmpeg -hide_banner -encoders 2>/dev/null || true)
+
+    if [[ "$encoder" == auto ]]; then
+        if grep -q hevc_videotoolbox <<<"$encoders_list"; then
+            encoder=videotoolbox
+        else
+            encoder=x265
+        fi
+    fi
+
+    if [[ "$encoder" == videotoolbox ]] && ! grep -q hevc_videotoolbox <<<"$encoders_list"; then
+        echo "Error: hevc_videotoolbox is not available in this ffmpeg build." >&2
+        exit 1
+    fi
+
+    if [[ "$encoder" == x265 ]] && ! grep -q libx265 <<<"$encoders_list"; then
+        echo "Error: libx265 is not available in this ffmpeg build." >&2
+        exit 1
+    fi
+
+    readonly encoder vt_quality crf budget_override remove_original overwrite_original force
 
     for file in "${files[@]}"; do
         if [[ ! -f "$file" ]]; then
@@ -193,89 +259,188 @@ main() {
             continue
         fi
 
-        codec=$(ffprobe -v error -select_streams v:0 \
-            -show_entries stream=codec_name \
-            -of default=noprint_wrappers=1:nokey=1 "$file" | head -n1)
+        codec=$(probe codec_name "$file")
 
         if [[ "$codec" == "hevc" ]] && ! $force; then
             echo "File $file is already in HEVC codec. Skipping." >&2
             continue
         fi
 
-        width=$(ffprobe -v error -select_streams v:0 \
-            -show_entries stream=width \
-            -of default=noprint_wrappers=1:nokey=1 "$file" | head -n1)
-
+        width=$(probe width "$file")
         fps=$(get_fps "$file")
-        cap=$(get_bitrate_cap "$width" "$fps")
-        source_bitrate=$(get_source_video_bitrate "$file")
+        pix_fmt=$(probe pix_fmt "$file")
+        duration=$(get_duration "$file")
+        source_size=$(wc -c <"$file")
+        video_bytes=$(get_video_bytes "$file")
 
-        if [[ "$source_bitrate" -gt 0 ]]; then
-            # Never spend more bits than the source did: this is what stops
-            # a 40 MB AV1 file from becoming a 400 MB HEVC file.
-            target=$((source_bitrate * ratio / 100))
-
-            if [[ "$target" -gt "$cap" ]]; then
-                target="$cap"
-            fi
-        else
-            echo "Warning: cannot detect source video bitrate for $file, using resolution cap." >&2
-            target="$cap"
+        if ! [[ "$duration" =~ ^[0-9]+(\.[0-9]+)?$ ]] ||
+            (($(awk -v d="$duration" 'BEGIN {print (d <= 0) ? 1 : 0}'))); then
+            echo "Cannot read duration for $file. Skipping." >&2
+            continue
         fi
 
-        maxrate=$((target * 130 / 100))
-        bufsize=$((maxrate * 2))
+        if [[ "$budget_override" -gt 0 ]]; then
+            budget_pct="$budget_override"
+        else
+            budget_pct=$(get_budget_for_codec "$codec")
+        fi
+
+        budget_bytes=$((source_size * budget_pct / 100))
+
+        # Audio, subtitles and attachments are stream-copied, so they consume the
+        # same bytes in the output. The video stream gets whatever is left.
+        other_bytes=$((source_size - video_bytes))
+        if [[ "$other_bytes" -lt 0 ]]; then other_bytes=0; fi
+
+        video_budget=$((budget_bytes - other_bytes))
+
+        if [[ "$video_budget" -le 0 ]]; then
+            echo "Budget ${budget_pct}% leaves no room for video in $file (copied streams alone exceed it). Skipping." >&2
+            continue
+        fi
+
+        # Bitrate ceiling that satisfies the budget, with slack for container
+        # overhead and for VBV averaging above the ceiling over long windows.
+        cap_bitrate=$(awk -v b="$video_budget" -v d="$duration" \
+            'BEGIN {printf "%d", b * 8 / d * 0.92}')
+        source_bitrate=$(awk -v b="$video_bytes" -v d="$duration" \
+            'BEGIN {printf "%d", b * 8 / d}')
+
+        case "$pix_fmt" in
+        *10le | *10be | *12le | *12be) ten_bit=true ;;
+        *) ten_bit=false ;;
+        esac
 
         echo "-> $file"
-        echo "   codec=$codec width=$width fps=$fps"
-        echo "   source video: $(human_kbit "$source_bitrate")"
-        echo "   target HEVC:  $(human_kbit "$target") (cap $(human_kbit "$cap"), ratio ${ratio}%)"
+        echo "   source:  $codec ${width}px ${fps}fps $pix_fmt, $(human_kbit "$source_bitrate"), $(human_mib "$source_size")"
+        echo "   budget:  ${budget_pct}% = $(human_mib "$budget_bytes"), video ceiling $(human_kbit "$cap_bitrate")"
 
-        progress_file="${base_name}.progress.hevc.${extension}"
-        rm -f "$progress_file"
+        # Color metadata, carried over so nothing shifts or washes out.
+        color_args=()
+        for entry in colorspace:color_space color_trc:color_transfer \
+            color_primaries:color_primaries; do
+            flag="${entry%%:*}"
+            field="${entry##*:}"
+            value=$(probe "$field" "$file")
 
-        if $use_videotoolbox; then
-            video_args=(-c:v hevc_videotoolbox -tag:v hvc1)
+            if [[ -n "$value" && "$value" != "unknown" && "$value" != "N/A" ]]; then
+                color_args+=("-$flag" "$value")
+            fi
+        done
+
+        # Keep the source bit depth: downgrading 10-bit to 8-bit causes banding
+        # in dark and fast-moving scenes.
+        depth_args=()
+        if [[ "$encoder" == videotoolbox ]]; then
+            if $ten_bit; then
+                depth_args=(-profile:v main10 -pix_fmt p010le)
+            else
+                depth_args=(-profile:v main -pix_fmt nv12)
+            fi
         else
-            video_args=(-c:v libx265 -preset medium -tag:v hvc1)
+            if $ten_bit; then
+                depth_args=(-pix_fmt yuv420p10le)
+            else
+                depth_args=(-pix_fmt yuv420p)
+            fi
         fi
 
-        if ffmpeg -hide_banner -y -i "$file" \
-            -map 0 \
-            "${video_args[@]}" \
-            -b:v "$target" \
-            -maxrate:v "$maxrate" \
-            -bufsize:v "$bufsize" \
-            -c:a copy \
-            -c:s copy \
-            -map_metadata 0 \
-            "$progress_file"; then
+        progress_file="${base_name}.progress.hevc.${extension}"
+        current_crf="$crf"
+        current_q="$vt_quality"
+        attempt=1
+        accepted=false
 
-            # Safety net: if HEVC still ended up bigger, keep the original.
-            original_size=$(wc -c <"$file")
+        while [[ "$attempt" -le "$MAX_ATTEMPTS" ]]; do
+            rate_args=()
+
+            if [[ "$encoder" == videotoolbox ]]; then
+                if [[ "$attempt" -lt "$MAX_ATTEMPTS" ]]; then
+                    # VideoToolbox ignores -b:v when -q:v is set, so quality mode
+                    # runs unconstrained and the budget is verified afterwards.
+                    rate_args=(-c:v hevc_videotoolbox -q:v "$current_q")
+                    mode_label="q:v $current_q"
+                else
+                    # Last resort: bitrate mode, which is guaranteed to fit.
+                    rate_args=(-c:v hevc_videotoolbox
+                        -b:v "$cap_bitrate"
+                        -maxrate:v "$((cap_bitrate * 3 / 2))"
+                        -bufsize:v "$((cap_bitrate * 3))")
+                    mode_label="abr $(human_kbit "$cap_bitrate")"
+                fi
+            else
+                # Capped CRF: quality drives the bitrate, and the ceiling only
+                # clamps the heaviest scenes. bufsize of 2x the ceiling lets a
+                # motion burst spend roughly double the average for ~2 seconds,
+                # which is what keeps fast scenes sharp, while still landing
+                # inside the budget on the first attempt.
+                rate_args=(-c:v libx265 -preset slow -crf "$current_crf"
+                    -maxrate:v "$cap_bitrate"
+                    -bufsize:v "$((cap_bitrate * 2))"
+                    -x265-params "aq-mode=3:psy-rd=2.0:psy-rdoq=1.0:rdoq-level=2")
+                mode_label="crf $current_crf, ceiling $(human_kbit "$cap_bitrate")"
+            fi
+
+            echo "   attempt $attempt: $mode_label"
+            rm -f "$progress_file"
+
+            if ! ffmpeg -hide_banner -y -i "$file" \
+                -map 0 \
+                "${rate_args[@]}" \
+                "${depth_args[@]}" \
+                "${color_args[@]}" \
+                -tag:v hvc1 \
+                -g "$((fps * 4))" \
+                -c:a copy \
+                -c:s copy \
+                -map_metadata 0 \
+                "$progress_file"; then
+                echo "Error occurred while converting $file." >&2
+                rm -f "$progress_file"
+                break
+            fi
+
             new_size=$(wc -c <"$progress_file")
 
-            if [[ "$new_size" -ge "$original_size" ]]; then
-                echo "Result is not smaller ($new_size >= $original_size bytes). Keeping original, discarding output." >&2
+            if [[ "$new_size" -le "$budget_bytes" ]]; then
+                accepted=true
+                break
+            fi
+
+            echo "   over budget: $(human_mib "$new_size") > $(human_mib "$budget_bytes")" >&2
+
+            if [[ "$attempt" -eq "$MAX_ATTEMPTS" ]]; then
+                break
+            fi
+
+            if [[ "$encoder" == videotoolbox ]]; then
+                current_q=$(next_quality_step vt "$current_q" "$new_size" "$budget_bytes")
+            else
+                current_crf=$(next_quality_step crf "$current_crf" "$new_size" "$budget_bytes")
+            fi
+
+            attempt=$((attempt + 1))
+        done
+
+        if ! $accepted; then
+            if [[ -f "$progress_file" ]]; then
+                echo "Could not fit $file into the ${budget_pct}% budget. Keeping original." >&2
                 rm -f "$progress_file"
-                continue
             fi
+            continue
+        fi
 
-            mv "$progress_file" "$hevc_file"
-            echo "File $file successfully converted to $hevc_file."
-            awk -v a="$original_size" -v b="$new_size" \
-                'BEGIN {printf "   %.1f MiB -> %.1f MiB (%.0f%% of original)\n", a/1048576, b/1048576, b*100/a}'
+        mv "$progress_file" "$hevc_file"
+        echo "File $file successfully converted to $hevc_file."
+        awk -v a="$source_size" -v b="$new_size" -v p="$budget_pct" \
+            'BEGIN {printf "   %.1f MiB -> %.1f MiB (%.0f%% of original, budget %d%%)\n", a/1048576, b/1048576, b*100/a, p}'
 
-            if $overwrite_original; then
-                mv -f "$hevc_file" "$file"
-                echo "Original file $file has been overwritten with the converted file."
-            elif $remove_original; then
-                rm -f "$file"
-                echo "Original file $file has been removed."
-            fi
-        else
-            echo "Error occurred while converting $file." >&2
-            rm -f "$progress_file"
+        if $overwrite_original; then
+            mv -f "$hevc_file" "$file"
+            echo "Original file $file has been overwritten with the converted file."
+        elif $remove_original; then
+            rm -f "$file"
+            echo "Original file $file has been removed."
         fi
     done
 }
